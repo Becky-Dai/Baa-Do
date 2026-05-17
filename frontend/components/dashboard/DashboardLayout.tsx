@@ -60,6 +60,10 @@ export default function DashboardLayout() {
     setRewardData(reward);
   }
 
+  function handleUncompleteTask(taskId: string) {
+    completeTask(taskId);
+  }
+
   function handleFeed(item: typeof myItems[0]) {
     feedLamb(item);
     consumeItem(item.id);
@@ -136,6 +140,7 @@ export default function DashboardLayout() {
             currentUserId={currentUser.id}
             buddyName={buddyUser?.name}
             onComplete={handleCompleteTask}
+            onUncomplete={handleUncompleteTask}
             onAddTask={() => setShowAddTask(true)}
           />
         </section>

@@ -13,6 +13,7 @@ interface TodayPanelProps {
   currentUserId: string;
   buddyName?: string;
   onComplete: (taskId: string) => void;
+  onUncomplete: (taskId: string) => void;
   onAddTask: () => void;
 }
 
@@ -22,6 +23,7 @@ export default function TodayPanel({
   currentUserId,
   buddyName,
   onComplete,
+  onUncomplete,
   onAddTask,
 }: TodayPanelProps) {
   const pendingPersonal = personalTasks.filter((t) => t.status !== 'completed');
@@ -44,22 +46,10 @@ export default function TodayPanel({
         ) : (
           <div className="flex flex-col gap-2">
             {pendingPersonal.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                currentUserId={currentUserId}
-                buddyName={buddyName}
-                onComplete={onComplete}
-              />
+              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} />
             ))}
             {donePersonal.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                currentUserId={currentUserId}
-                buddyName={buddyName}
-                onComplete={onComplete}
-              />
+              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} />
             ))}
           </div>
         )}
@@ -82,13 +72,7 @@ export default function TodayPanel({
         ) : (
           <div className="flex flex-col gap-2">
             {sharedTasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                currentUserId={currentUserId}
-                buddyName={buddyName}
-                onComplete={onComplete}
-              />
+              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} />
             ))}
           </div>
         )}
