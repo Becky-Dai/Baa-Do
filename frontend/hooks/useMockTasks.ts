@@ -21,16 +21,28 @@ export function useMockTasks() {
       prev.map((t) => {
         if (t.id !== taskId) return t;
         if (t.type === 'personal') {
+          const isDone = t.completedByIds.includes(CURRENT_USER_ID);
+          if (isDone) {
+            // undo
+            return { ...t, status: 'pending', completedByIds: [] };
+          }
           return { ...t, status: 'completed', completedByIds: [CURRENT_USER_ID] };
         }
         const already = t.completedByIds.includes(CURRENT_USER_ID);
-        if (already) return t;
+        if (already) {
+          // undo shared
+          const newCompleted = t.completedByIds.filter((id) => id !== CURRENT_USER_ID);
+          return {
+            ...t,
+            completedByIds: newCompleted,
+            status: newCompleted.length === 0 ? 'pending' : 'partially_completed',
+          };
+        }
         const newCompleted = [...t.completedByIds, CURRENT_USER_ID];
-        const isFullyDone = newCompleted.length >= 2;
         return {
           ...t,
           completedByIds: newCompleted,
-          status: isFullyDone ? 'completed' : 'partially_completed',
+          status: newCompleted.length >= 2 ? 'completed' : 'partially_completed',
         };
       })
     );

@@ -98,15 +98,15 @@ export default function TaskCard({ task, currentUserId, buddyName, onComplete }:
 
       <div className="relative flex items-start gap-3">
         <button
-          onClick={() => !isDone && !alreadyCompleted && onComplete(task.id)}
-          disabled={isDone || alreadyCompleted}
+          onClick={() => onComplete(task.id)}
+          title={alreadyCompleted ? '点击撤销' : '点击完成'}
           className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-            isDone || alreadyCompleted
-              ? 'bg-green-200 border-green-300 text-green-600'
+            alreadyCompleted
+              ? 'bg-green-200 border-green-300 text-green-600 hover:bg-red-100 hover:border-red-300 hover:text-red-400'
               : 'border-green-300 hover:bg-green-50'
           }`}
         >
-          {(isDone || alreadyCompleted) && <span className="text-xs">✓</span>}
+          {alreadyCompleted && <span className="text-xs">✓</span>}
         </button>
 
         <div className="flex-1 min-w-0">
