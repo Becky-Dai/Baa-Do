@@ -1,0 +1,197 @@
+/**
+ * 中文：这个文件存放 BaaDo Web Preview 第一阶段使用的 mock 数据。
+ * English: This file stores mock data for Phase 1 of BaaDo Web Preview.
+ */
+
+import type { User } from '../types/user';
+import type { PairRoom } from '../types/room';
+import type { PairLamb } from '../types/lamb';
+import type { Task } from '../types/task';
+import type { InventoryItem, ActivityLogEntry, MeadowElement } from '../types/economy';
+
+export const mockUsers: User[] = [
+  {
+    id: 'user-beiqi',
+    name: 'Beiqi',
+    avatarColor: '#a8d5a2',
+    baaCoins: 45,
+    bondWithLamb: 55,
+    bondLevel: 2,
+  },
+  {
+    id: 'user-alice',
+    name: 'Alice',
+    avatarColor: '#f4c2c2',
+    baaCoins: 30,
+    bondWithLamb: 30,
+    bondLevel: 1,
+  },
+];
+
+export const mockRoom: PairRoom = {
+  id: 'room-001',
+  inviteCode: 'MOCHI7',
+  status: 'active',
+  userAId: 'user-beiqi',
+  userBId: 'user-alice',
+  lambId: 'lamb-mochi',
+  homeExp: 35,
+  homeLevel: 2,
+  createdAt: '2026-05-10T10:00:00Z',
+};
+
+export const mockLamb: PairLamb = {
+  id: 'lamb-mochi',
+  name: 'Mochi',
+  appearance: 'milktea',
+  level: 2,
+  exp: 60,
+  fullness: 72,
+  mood: 80,
+  moodState: 'happy',
+  currentOutfit: null,
+};
+
+export const mockTasks: Task[] = [
+  {
+    id: 'task-001',
+    type: 'personal',
+    title: '背 30 个单词',
+    difficulty: 'easy',
+    status: 'pending',
+    visibility: 'status_only',
+    ownerId: 'user-beiqi',
+    completedByIds: [],
+    createdAt: '2026-05-17T08:00:00Z',
+  },
+  {
+    id: 'task-002',
+    type: 'personal',
+    title: '运动 20 分钟',
+    difficulty: 'medium',
+    status: 'completed',
+    visibility: 'visible_to_buddy',
+    ownerId: 'user-beiqi',
+    completedByIds: ['user-beiqi'],
+    createdAt: '2026-05-17T08:00:00Z',
+  },
+  {
+    id: 'task-003',
+    type: 'personal',
+    title: 'Alice 的任务',
+    difficulty: 'easy',
+    status: 'pending',
+    visibility: 'private',
+    ownerId: 'user-alice',
+    completedByIds: [],
+    createdAt: '2026-05-17T08:00:00Z',
+  },
+  {
+    id: 'task-004',
+    type: 'shared',
+    title: '一起复盘本周计划',
+    difficulty: 'medium',
+    status: 'partially_completed',
+    visibility: 'visible_to_buddy',
+    ownerId: null,
+    completedByIds: ['user-beiqi'],
+    createdAt: '2026-05-17T08:00:00Z',
+  },
+  {
+    id: 'task-005',
+    type: 'shared',
+    title: '一起散步 20 分钟',
+    difficulty: 'easy',
+    status: 'pending',
+    visibility: 'visible_to_buddy',
+    ownerId: null,
+    completedByIds: [],
+    createdAt: '2026-05-17T08:00:00Z',
+  },
+];
+
+export const mockInventory: InventoryItem[] = [
+  {
+    id: 'item-001',
+    name: 'Basic Hay',
+    type: 'food',
+    quantity: 3,
+    ownerId: 'user-beiqi',
+    fullnessBoost: 15,
+    moodBoost: 0,
+    bondBoost: 0,
+  },
+  {
+    id: 'item-002',
+    name: 'Premium Clover',
+    type: 'food',
+    quantity: 1,
+    ownerId: 'user-beiqi',
+    fullnessBoost: 30,
+    moodBoost: 5,
+    bondBoost: 0,
+  },
+  {
+    id: 'item-003',
+    name: 'Berry Treat',
+    type: 'food',
+    quantity: 1,
+    ownerId: 'user-alice',
+    fullnessBoost: 0,
+    moodBoost: 20,
+    bondBoost: 5,
+  },
+];
+
+export const mockActivityLogs: ActivityLogEntry[] = [
+  {
+    id: 'log-001',
+    actorId: 'user-beiqi',
+    actorName: 'Beiqi',
+    action: '完成了个人任务，Mochi 得到了 Basic Hay 🌾',
+    timestamp: '2026-05-17T09:30:00Z',
+    isPublic: true,
+  },
+  {
+    id: 'log-002',
+    actorId: 'user-alice',
+    actorName: 'Alice',
+    action: '喂了 Mochi 一颗 Berry Treat 🍓',
+    timestamp: '2026-05-17T10:00:00Z',
+    isPublic: true,
+  },
+  {
+    id: 'log-003',
+    actorId: 'user-beiqi',
+    actorName: 'Beiqi',
+    action: '完成了共同任务"一起复盘本周计划"的自己部分',
+    timestamp: '2026-05-17T11:00:00Z',
+    isPublic: true,
+  },
+];
+
+export const mockMeadowElements: MeadowElement[] = [
+  {
+    id: 'meadow-001',
+    name: 'Small Flower',
+    emoji: '🌸',
+    unlockedAt: '2026-05-12T12:00:00Z',
+    isPlaced: true,
+  },
+  {
+    id: 'meadow-002',
+    name: 'Wooden Sign',
+    emoji: '🪧',
+    unlockedAt: '2026-05-15T16:00:00Z',
+    isPlaced: true,
+  },
+  {
+    id: 'meadow-003',
+    name: 'Picnic Blanket',
+    emoji: '🧺',
+    unlockedAt: '2026-05-17T11:00:00Z',
+    isPlaced: false,
+  },
+];
+
+export const CURRENT_USER_ID = 'user-beiqi';
