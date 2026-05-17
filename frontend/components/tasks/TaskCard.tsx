@@ -3,7 +3,6 @@
  * English: Task card component showing a single task with its status and complete button.
  */
 
-import { useState } from 'react';
 import Badge from '../ui/Badge';
 import type { Task } from '../../types/task';
 
@@ -49,7 +48,6 @@ function SharedProgress({ task, buddyName }: { task: Task; buddyName?: string })
 }
 
 export default function TaskCard({ task, currentUserId, buddyName, onComplete, onUncomplete }: TaskCardProps) {
-  const [confirming, setConfirming] = useState(false);
   const isDone = task.status === 'completed';
   const alreadyCompleted = task.completedByIds.includes(currentUserId);
   const isPrivate = task.visibility === 'private';
@@ -100,33 +98,16 @@ export default function TaskCard({ task, currentUserId, buddyName, onComplete, o
       <div style={rimStyle} />
 
       <div className="relative flex items-start gap-3">
-        {confirming ? (
-          <div className="flex items-center gap-1 mt-0.5 flex-shrink-0">
-            <button
-              onClick={() => { onUncomplete(task.id); setConfirming(false); }}
-              className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-600 border border-red-200 hover:bg-red-200 transition-colors"
-            >
-              撤销
-            </button>
-            <button
-              onClick={() => setConfirming(false)}
-              className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 border border-gray-200 hover:bg-gray-200 transition-colors"
-            >
-              取消
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => alreadyCompleted ? setConfirming(true) : onComplete(task.id)}
-            className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-              alreadyCompleted
-                ? 'bg-green-200 border-green-300 text-green-600 hover:bg-red-100 hover:border-red-300 hover:text-red-400'
-                : 'border-green-300 hover:bg-green-50'
-            }`}
-          >
-            {alreadyCompleted && <span className="text-xs">✓</span>}
-          </button>
-        )}
+        <button
+          onClick={() => alreadyCompleted ? onUncomplete(task.id) : onComplete(task.id)}
+          className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+            alreadyCompleted
+              ? 'bg-green-200 border-green-300 text-green-600 hover:bg-red-100 hover:border-red-300 hover:text-red-400'
+              : 'border-green-300 hover:bg-green-50'
+          }`}
+        >
+          {alreadyCompleted && <span className="text-xs">✓</span>}
+        </button>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">

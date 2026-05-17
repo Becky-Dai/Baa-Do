@@ -12,6 +12,7 @@ import MeadowPanel from './MeadowPanel';
 import BuddyPanel from './BuddyPanel';
 import AddTaskModal from '../tasks/AddTaskModal';
 import RewardModal from '../tasks/RewardModal';
+import UndoConfirmModal from '../tasks/UndoConfirmModal';
 import { useMockRoom } from '../../hooks/useMockRoom';
 import { useMockLamb } from '../../hooks/useMockLamb';
 import { useMockTasks } from '../../hooks/useMockTasks';
@@ -25,6 +26,7 @@ export default function DashboardLayout() {
   const [showAddTask, setShowAddTask] = useState(false);
   const [rewardTask, setRewardTask] = useState<Task | null>(null);
   const [rewardData, setRewardData] = useState<TaskReward | null>(null);
+  const [undoTask, setUndoTask] = useState<Task | null>(null);
 
   const { room, currentUser, buddyUser } = useMockRoom();
   const { lamb, feedLamb, addLambExp } = useMockLamb();
@@ -61,7 +63,8 @@ export default function DashboardLayout() {
   }
 
   function handleUncompleteTask(taskId: string) {
-    completeTask(taskId);
+    const task = [...personalTasks, ...sharedTasks].find((t) => t.id === taskId);
+    if (task) setUndoTask(task);
   }
 
   function handleFeed(item: typeof myItems[0]) {
@@ -205,6 +208,13 @@ export default function DashboardLayout() {
         onClose={() => { setRewardTask(null); setRewardData(null); }}
         task={rewardTask}
         reward={rewardData}
+      />
+
+      <UndoConfirmModal
+        isOpen={!!undoTask}
+        onClose={() => setUndoTask(null)}
+        onConfirm={() => undoTask && completeTask(undoTask.id)}
+        task={undoTask}
       />
     </div>
   );
