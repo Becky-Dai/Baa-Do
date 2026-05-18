@@ -148,6 +148,7 @@ function SheepSign({ label }: { label: string }) {
 const SHEEP_HAPPY_MS = 2500;
 
 function AvatarMenu({ user }: { user: { name: string; avatarColor: string } }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -182,7 +183,7 @@ function AvatarMenu({ user }: { user: { name: string; avatarColor: string } }) {
         onClick={() => { window.location.href = '/'; }}
         className="w-full px-4 py-2.5 text-left text-sm text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2"
       >
-        <span>↩</span> 退出登录
+        <span>↩</span> {t('user.logout')}
       </button>
     </div>,
     document.body

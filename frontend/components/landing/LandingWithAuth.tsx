@@ -28,12 +28,9 @@ const LANGUAGES = [
   { code: 'es',    label: 'Español',  short: 'ES'   },
 ];
 
-const FEATURES = [
-  { emoji: '🐑', zh: '共养一只小羊' },
-  { emoji: '🌿', zh: '个人任务换小草' },
-  { emoji: '💰', zh: '共同任务赚金币' },
-  { emoji: '🏠', zh: '一起建设草地' },
-];
+const FEATURE_KEYS = ['landing.feature1', 'landing.feature2', 'landing.feature3', 'landing.feature4'] as const;
+const FEATURE_EMOJIS = [null, '🌿', '💰', '🏠'];
+const FEATURE_IMGS   = ['/lambhead.png', null, null, null];
 
 function LangSelector() {
   const { lang, setLang } = useLang();
@@ -123,7 +120,7 @@ function AuthCard() {
 
   return (
     <div className="w-full bg-white rounded-3xl p-8 shadow-xl" style={{ boxShadow:'0 12px 48px rgba(80,160,80,0.12), 0 2px 8px rgba(0,0,0,0.06)' }}>
-      <h2 className="text-2xl font-bold text-center mb-6" style={{ color:'#1a5c35' }}>欢迎回来 👋</h2>
+      <h2 className="text-2xl font-bold text-center mb-6" style={{ color:'#1a5c35' }}>{t('auth.welcome')}</h2>
 
       {/* Tab bar */}
       <div className="flex gap-1 mb-6 bg-gray-100 rounded-2xl p-1">
@@ -156,7 +153,7 @@ function AuthCard() {
           <button type="submit" disabled={loading}
             className="mt-1 w-full py-3.5 rounded-2xl font-semibold text-sm text-white transition-all disabled:opacity-60"
             style={{ background:'linear-gradient(135deg,#52c46a,#2da84c)', boxShadow:'0 4px 16px rgba(45,168,76,0.4)' }}>
-            {loading ? t('auth.loginLoading') : '♥ 回到小羊身边'}
+            {loading ? t('auth.loginLoading') : t('landing.loginBtn')}
           </button>
           <p className="text-xs text-center text-gray-400">
             {t('auth.noAccount')}{' '}
@@ -176,7 +173,7 @@ function AuthCard() {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300">
               <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M2 4l6 5 6-5M2 4h12v8H2V4z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/></svg>
             </span>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="你的邮箱地址" className={inputBase}/>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('auth.placeholderEmail')} className={inputBase}/>
           </div>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300">
@@ -203,6 +200,7 @@ function AuthCard() {
 }
 
 function LandingInner() {
+  const t = useT();
   return (
     <div className="min-h-screen relative overflow-hidden flex flex-col md:flex-row"
       style={{ background:'linear-gradient(175deg, #bfe8d4 0%, #d8f0dc 25%, #ecf7e8 50%, #f5f2d8 80%, #faf0c8 100%)' }}>
@@ -228,7 +226,7 @@ function LandingInner() {
         <div className="max-w-lg w-full text-center md:text-left">
 
           {/* Sheep canvas */}
-          <SheepHeadCanvas className="w-56 md:w-64 h-[240px] select-none -mb-2 mx-auto md:mx-0" />
+          <SheepHeadCanvas className="w-[232px] md:w-[268px] h-[240px] select-none -mb-2 mx-auto md:mx-0" />
 
           {/* Title */}
           <div className="flex items-baseline gap-2 mb-3">
@@ -237,23 +235,25 @@ function LandingInner() {
           </div>
 
           <p className="text-lg font-semibold mb-1" style={{ color:'#1a5c35' }}>
-            两个人一起完成 Todo，慢慢养大一只属于你们的小羊。
+            {t('landing.tagline')}
           </p>
           <p className="text-sm mb-8" style={{ color:'#52a872' }}>
-            共同任务赚金币，个人任务收集小草，一起建设属于你们的草地。
+            {t('landing.tagline2')}
           </p>
 
-          {/* 2×2 feature grid — circles */}
+          {/* Feature circles */}
           <div className="grid grid-cols-4 gap-5 max-w-md mx-auto md:mx-0">
-            {FEATURES.map((f) => (
-              <div key={f.zh} className="flex flex-col items-center gap-2.5">
+            {FEATURE_KEYS.map((key, i) => (
+              <div key={key} className="flex flex-col items-center gap-2.5">
                 <div
-                  className="w-20 h-20 rounded-full flex items-center justify-center text-4xl"
+                  className="w-20 h-20 rounded-full flex items-center justify-center text-4xl overflow-hidden"
                   style={{ background:'rgba(255,255,255,0.85)', border:'2px solid rgba(255,255,255,0.95)', backdropFilter:'blur(8px)', boxShadow:'0 4px 14px rgba(80,160,80,0.15)' }}
                 >
-                  {f.emoji}
+                  {FEATURE_IMGS[i]
+                    ? <img src={FEATURE_IMGS[i]!} alt={t(key)} className="w-full h-full object-cover" />
+                    : FEATURE_EMOJIS[i]}
                 </div>
-                <span className="text-xs font-semibold text-center leading-snug" style={{ color:'#1a5c35' }}>{f.zh}</span>
+                <span className="text-xs font-semibold text-center leading-snug" style={{ color:'#1a5c35' }}>{t(key)}</span>
               </div>
             ))}
           </div>
