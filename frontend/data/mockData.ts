@@ -144,6 +144,49 @@ export const mockInventory: InventoryItem[] = [
 ];
 
 export const mockActivityLogs: ActivityLogEntry[] = [
+  // 5月15日
+  {
+    id: 'log-101',
+    actorId: 'user-alice',
+    actorName: 'Alice',
+    action: '喂了 Mochi 一颗 Premium Clover 🍀',
+    timestamp: '2026-05-15T08:20:00Z',
+    isPublic: true,
+  },
+  {
+    id: 'log-102',
+    actorId: 'user-beiqi',
+    actorName: 'Beiqi',
+    action: '完成了个人任务，Mochi 得到了 Basic Hay 🌾',
+    timestamp: '2026-05-15T14:00:00Z',
+    isPublic: true,
+  },
+  // 5月16日
+  {
+    id: 'log-201',
+    actorId: 'user-beiqi',
+    actorName: 'Beiqi',
+    action: '完成了共同任务"一起制定本周计划"的自己部分',
+    timestamp: '2026-05-16T09:10:00Z',
+    isPublic: true,
+  },
+  {
+    id: 'log-202',
+    actorId: 'user-alice',
+    actorName: 'Alice',
+    action: '完成了共同任务"一起制定本周计划"，Meadow 解锁了 Small Flower 🌸',
+    timestamp: '2026-05-16T10:30:00Z',
+    isPublic: true,
+  },
+  {
+    id: 'log-203',
+    actorId: 'user-beiqi',
+    actorName: 'Beiqi',
+    action: '喂了 Mochi 一颗 Berry Treat 🍓',
+    timestamp: '2026-05-16T20:00:00Z',
+    isPublic: true,
+  },
+  // 5月17日（今天）
   {
     id: 'log-001',
     actorId: 'user-beiqi',
