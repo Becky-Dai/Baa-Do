@@ -38,7 +38,7 @@ function BondCard({ user, isCurrentUser }: { user: User; isCurrentUser: boolean 
               style={{ width: `${bondPercent}%` }}
             />
           </div>
-          <span className="text-xs text-pink-500 font-semibold">Bond Lv.{user.bondLevel}</span>
+          <span className="text-xs text-pink-500 font-semibold">亲密度 Lv.{user.bondLevel}</span>
         </div>
       </div>
     </div>
@@ -55,7 +55,7 @@ export default function BuddyPanel({
     <div className="flex flex-col gap-4">
       {/* Bond cards */}
       <section>
-        <h3 className="text-sm font-bold text-green-800 mb-2">与 Mochi 的亲密度 Bond</h3>
+        <h3 className="text-sm font-bold text-green-800 mb-2">与 Mochi 的亲密度</h3>
         <div className="flex flex-col gap-2">
           <BondCard user={currentUser} isCurrentUser />
           {buddyUser && <BondCard user={buddyUser} isCurrentUser={false} />}
@@ -64,7 +64,7 @@ export default function BuddyPanel({
 
       {/* Activity log */}
       <section>
-        <h3 className="text-sm font-bold text-green-800 mb-2">活动记录 Activity Log</h3>
+        <h3 className="text-sm font-bold text-green-800 mb-2">活动记录</h3>
         <ActivityLog logs={activityLogs} users={allUsers} />
       </section>
     </div>

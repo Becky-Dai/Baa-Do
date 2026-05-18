@@ -68,7 +68,7 @@ export default function MeadowPanel({ room, meadowElements, lamb, onFeed }: Mead
       <div className="rounded-3xl overflow-hidden" style={glassCard}>
         <div className="px-5 py-3">
           <CollapseHeader
-            title={`🌿 Meadow Level · Lv.${room.homeLevel}`}
+            title={`🌿 草地等级 · Lv.${room.homeLevel}`}
             open={meadowOpen}
             onToggle={() => setMeadowOpen((v) => !v)}
           />
@@ -77,8 +77,8 @@ export default function MeadowPanel({ room, meadowElements, lamb, onFeed }: Mead
           <div className="px-5 pb-4">
             <p className="text-sm font-bold text-green-900 mb-2">{homeLevelLabel[room.homeLevel]}</p>
             <div className="flex justify-between text-xs text-green-700 mb-1">
-              <span>{room.homeExp} EXP</span>
-              <span>→ {nextLevelExp} EXP</span>
+              <span>{room.homeExp} 经验</span>
+              <span>→ {nextLevelExp} 经验</span>
             </div>
             <div className="w-full bg-white/40 rounded-full h-2">
               <div className="h-2 rounded-full bg-green-400 transition-all duration-300" style={{ width: `${progress}%` }} />

@@ -51,7 +51,7 @@ export default function FeedModal({ isOpen, onClose, items, onFeed }: FeedModalP
                 <p className="text-xs text-gray-500">
                   {item.fullnessBoost > 0 && `+${item.fullnessBoost} 饱腹 `}
                   {item.moodBoost > 0 && `+${item.moodBoost} 心情 `}
-                  {item.bondBoost > 0 && `+${item.bondBoost} Bond`}
+                  {item.bondBoost > 0 && `+${item.bondBoost} 亲密度`}
                 </p>
               </div>
               <span className="text-xs text-gray-400">x{item.quantity}</span>

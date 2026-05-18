@@ -34,9 +34,9 @@ export default function RewardModal({ isOpen, onClose, task, reward }: RewardMod
 
         {isShared ? (
           <>
-            <p className="text-sm text-gray-500">共同任务完成，Meadow 成长了！</p>
+            <p className="text-sm text-gray-500">共同任务完成，草地成长了！</p>
             <div className="w-full bg-green-50 rounded-2xl p-4 space-y-2">
-              <RewardRow emoji="🏡" label="Home EXP" value={`+${reward.homeExp}`} />
+              <RewardRow emoji="🏡" label="草地经验" value={`+${reward.homeExp}`} />
               {reward.meadowElement && (
                 <RewardRow
                   emoji="🌸"
@@ -56,9 +56,9 @@ export default function RewardModal({ isOpen, onClose, task, reward }: RewardMod
               {reward.item && (
                 <RewardRow emoji={itemEmoji[reward.item] ?? '🎁'} label="获得物品" value={reward.item} />
               )}
-              <RewardRow emoji="🪙" label="Baa Coins" value={`+${reward.baaCoins}`} />
-              <RewardRow emoji="⚡" label="Lamb EXP" value={`+${reward.lambExp}`} />
-              <RewardRow emoji="💛" label="Bond" value={`+${reward.bondIncrease}`} />
+              <RewardRow emoji="🪙" label="咩币" value={`+${reward.baaCoins}`} />
+              <RewardRow emoji="⚡" label="小羊经验" value={`+${reward.lambExp}`} />
+              <RewardRow emoji="💛" label="亲密度" value={`+${reward.bondIncrease}`} />
             </div>
             <p className="text-xs text-amber-600 bg-amber-50 rounded-xl px-3 py-2">
               Mochi 说：谢谢你，{reward.item ? `我收到了 ${reward.item}！` : '你真棒！'} 🐑
