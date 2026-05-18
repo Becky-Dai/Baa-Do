@@ -125,7 +125,22 @@ export default function DashboardLayout() {
           </div>
           <span className="text-sm font-semibold text-green-900">{currentUser.name}</span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          {[{ emoji: '🧺', label: '库存' }, { emoji: '🏠', label: '草地' }].map(({ emoji, label }) => (
+            <button
+              key={label}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-green-900 transition-colors hover:bg-white/40"
+              style={{
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                backgroundColor: 'rgba(255,255,255,0.25)',
+                border: '1px solid rgba(255,255,255,0.5)',
+              }}
+            >
+              <span>{emoji}</span>
+              <span>{label}</span>
+            </button>
+          ))}
           <span className="text-xs text-amber-700 font-semibold bg-amber-100/60 px-2 py-1 rounded-full">
             🪙 {currentUser.baaCoins}
           </span>
@@ -164,29 +179,6 @@ export default function DashboardLayout() {
             allUsers={mockUsers}
           />
         </section>
-      </div>
-
-      {/* Right-side floating dock */}
-      <div className="fixed right-4 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-3">
-        {[
-          { emoji: '🧺', label: '库存' },
-          { emoji: '🏠', label: '草地' },
-        ].map(({ emoji, label }) => (
-          <button
-            key={label}
-            className="w-14 h-14 rounded-full flex flex-col items-center justify-center gap-0.5"
-            style={{
-              backdropFilter: 'blur(20px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-              backgroundColor: 'rgba(255,255,255,0.28)',
-              border: '1px solid rgba(255,255,255,0.55)',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8)',
-            }}
-          >
-            <span className="text-2xl leading-none">{emoji}</span>
-            <span className="text-[10px] text-white font-semibold drop-shadow">{label}</span>
-          </button>
-        ))}
       </div>
 
       {/* Modals */}
