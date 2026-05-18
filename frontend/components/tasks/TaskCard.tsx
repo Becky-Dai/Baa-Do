@@ -199,7 +199,7 @@ export default function TaskCard({
         {shared && (
           <>
             <span className="text-gray-300 text-xs">·</span>
-            <span className="text-xs text-blue-500 font-medium">共同</span>
+            <span className="text-xs text-green-700 font-medium">共同</span>
           </>
         )}
 
