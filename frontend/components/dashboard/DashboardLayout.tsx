@@ -5,7 +5,8 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import FeedModal from '../lamb/FeedModal';
 import TodayPanel from './TodayPanel';
 import MeadowPanel from './MeadowPanel';
@@ -21,6 +22,90 @@ import { calcPersonalReward, calcSharedReward } from '../../lib/rewardRules';
 import { mockMeadowElements, mockUsers } from '../../data/mockData';
 import { useMockActivityLog } from '../../hooks/useMockActivityLog';
 import type { Task, TaskReward } from '../../types/task';
+
+const LANGUAGES = [
+  { code: 'zh-CN', label: '简体中文', short: '简中' },
+  { code: 'zh-TW', label: '繁體中文', short: '繁中' },
+  { code: 'en',    label: 'English',  short: 'EN'   },
+  { code: 'ko',    label: '한국어',   short: 'KR'   },
+  { code: 'ja',    label: '日本語',   short: 'JP'   },
+  { code: 'es',    label: 'Español',  short: 'ES'   },
+];
+
+function LangSelector() {
+  const [lang, setLang] = useState('zh-CN');
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState({ top: 0, right: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const current = LANGUAGES.find((l) => l.code === lang)!;
+
+  function handleOpen() {
+    if (btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
+    }
+    setOpen(true);
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: MouseEvent) {
+      const t = e.target as Node;
+      if (!menuRef.current?.contains(t) && !btnRef.current?.contains(t)) setOpen(false);
+    }
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
+
+  const dropdown = open ? createPortal(
+    <div
+      ref={menuRef}
+      style={{
+        position: 'fixed', top: pos.top, right: pos.right, zIndex: 9999,
+        width: 140, borderRadius: 16, overflow: 'hidden',
+        background: '#fff', border: '1px solid rgba(0,0,0,0.08)',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.13)',
+      }}
+    >
+      {LANGUAGES.map((l) => (
+        <button
+          key={l.code}
+          onClick={() => { setLang(l.code); setOpen(false); }}
+          className={`w-full px-4 py-2.5 text-left text-sm flex items-center justify-between transition-colors ${
+            l.code === lang ? 'bg-green-50 text-green-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span>{l.label}</span>
+          {l.code === lang && <span className="text-green-500 text-xs">✓</span>}
+        </button>
+      ))}
+    </div>,
+    document.body
+  ) : null;
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={handleOpen}
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-green-900 transition-colors hover:bg-white/40"
+        style={{
+          backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+          backgroundColor: 'rgba(255,255,255,0.25)',
+          border: '1px solid rgba(255,255,255,0.5)',
+        }}
+      >
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+          <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2"/>
+          <path d="M7 1.5C7 1.5 5 4 5 7s2 5.5 2 5.5M7 1.5C7 1.5 9 4 9 7s-2 5.5-2 5.5M1.5 7h11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+        </svg>
+        {current.short}
+      </button>
+      {dropdown}
+    </>
+  );
+}
 
 function SheepSign({ label }: { label: string }) {
   return (
@@ -199,6 +284,7 @@ export default function DashboardLayout() {
           <span className="text-xs text-amber-700 font-semibold bg-amber-100/60 px-2 py-1 rounded-full">
             🪙 {currentUser.baaCoins}
           </span>
+          <LangSelector />
         </div>
       </header>
 
