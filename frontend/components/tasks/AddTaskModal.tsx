@@ -141,7 +141,7 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
                 type="button"
                 onClick={() => setPriority(priority === level ? 0 : level)}
                 className="text-2xl leading-none transition-all hover:scale-110"
-                style={level <= priority ? {} : { filter: 'grayscale(1)', opacity: 0.22 }}
+                style={level <= priority ? {} : { filter: 'grayscale(0.6)', opacity: 0.45 }}
                 title={`优先级 ${level}`}
               >
                 🐑

@@ -190,7 +190,7 @@ export default function TaskCard({
                 <span
                   key={i}
                   className="text-xs leading-none select-none"
-                  style={i <= task.priority ? {} : { filter: 'grayscale(1)', opacity: 0.2 }}
+                  style={i <= task.priority ? {} : { filter: 'grayscale(0.6)', opacity: 0.45 }}
                 >🐑</span>
               ))}
             </span>
