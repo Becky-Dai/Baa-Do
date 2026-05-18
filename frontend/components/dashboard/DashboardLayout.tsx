@@ -179,7 +179,7 @@ function AvatarMenu({ user }: { user: { name: string; avatarColor: string } }) {
         <p className="text-sm font-semibold text-gray-800">{user.name}</p>
       </div>
       <button
-        onClick={() => { window.location.href = '/login'; }}
+        onClick={() => { window.location.href = '/'; }}
         className="w-full px-4 py-2.5 text-left text-sm text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2"
       >
         <span>↩</span> 退出登录
