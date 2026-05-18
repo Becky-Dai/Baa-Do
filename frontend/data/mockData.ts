@@ -48,7 +48,7 @@ export const mockLamb: PairLamb = {
   exp: 60,
   fullness: 72,
   mood: 80,
-  moodState: 'happy',
+  moodState: 'normal',
   currentOutfit: null,
 };
 

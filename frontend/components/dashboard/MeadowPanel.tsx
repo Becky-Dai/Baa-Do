@@ -36,10 +36,7 @@ const glassCard: React.CSSProperties = {
 
 function CollapseHeader({ title, open, onToggle }: { title: string; open: boolean; onToggle: () => void }) {
   return (
-    <button
-      onClick={onToggle}
-      className="w-full flex items-center justify-between text-left"
-    >
+    <button onClick={onToggle} className="w-full flex items-center justify-between text-left">
       <span className="text-xs font-semibold text-green-800">{title}</span>
       <span className="text-green-700 text-xs">{open ? '▲' : '▼'}</span>
     </button>
@@ -48,8 +45,8 @@ function CollapseHeader({ title, open, onToggle }: { title: string; open: boolea
 
 export default function MeadowPanel({ room, meadowElements, lamb, onFeed }: MeadowPanelProps) {
   const t = useT();
-  const [meadowOpen, setMeadowOpen] = useState(true);
-  const [mochiOpen, setMochiOpen] = useState(true);
+  const [meadowOpen, setMeadowOpen] = useState(false);
+  const [mochiOpen, setMochiOpen] = useState(false);
 
   const nextLevelExp = homeLevelExpNeeded[room.homeLevel] ?? 999;
   const prevLevelExp = homeLevelExpNeeded[room.homeLevel - 1] ?? 0;

@@ -108,7 +108,7 @@ export function SheepSceneEmbed({ mood, celebrationKey, onSheepClick }: SheepSce
   return (
     <Canvas
       shadows
-      camera={{ position: [0, 2.6, 7.2], fov: 38 }}
+      camera={{ position: [0, 2.2, 7.0], fov: 52 }}
       gl={{ antialias: true, alpha: true }}
       style={{ background: 'transparent' }}
     >
@@ -116,8 +116,10 @@ export function SheepSceneEmbed({ mood, celebrationKey, onSheepClick }: SheepSce
         <Lights />
         <Ground />
         <Fence />
-        <SheepModel mood={mood} celebrationKey={celebrationKey} onSheepClick={onSheepClick} />
-        <CelebrationEffects activeKey={celebrationKey} />
+        <group scale={0.72}>
+          <SheepModel mood={mood} celebrationKey={celebrationKey} onSheepClick={onSheepClick} />
+          <CelebrationEffects activeKey={celebrationKey} />
+        </group>
       </Suspense>
     </Canvas>
   );

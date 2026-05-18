@@ -24,7 +24,8 @@ import { useMockActivityLog } from '../../hooks/useMockActivityLog';
 import type { Task, TaskReward } from '../../types/task';
 import { LangProvider, useLang, useT } from '../../contexts/LangContext';
 import type { LangCode } from '../../lib/i18n/translations';
-import { SheepSceneWrapper } from '../sheep/SheepSceneWrapper';
+import { SheepSceneWrapper, SHEEP_MOOD_MAP } from '../sheep/SheepSceneWrapper';
+import type { SheepMood } from '../sheep/SheepModel';
 
 const LANGUAGES = [
   { code: 'zh-CN', label: '简体中文', short: '简中' },
@@ -141,6 +142,8 @@ function SheepSign({ label }: { label: string }) {
   );
 }
 
+const SHEEP_HAPPY_MS = 2500;
+
 function DashboardContent() {
   const t = useT();
   const [showFeedModal, setShowFeedModal] = useState(false);
@@ -149,12 +152,24 @@ function DashboardContent() {
   const [rewardData, setRewardData] = useState<TaskReward | null>(null);
   const [undoTask, setUndoTask] = useState<Task | null>(null);
 
+  // Sheep interaction state (managed here so the DOM click zone can trigger it)
+  const [sheepMoodOverride, setSheepMoodOverride] = useState<SheepMood | null>(null);
+  const [sheepCelebKey, setSheepCelebKey] = useState(0);
+  const sheepRevertTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const { room, currentUser, buddyUser } = useMockRoom();
   const { lamb, feedLamb, addLambExp } = useMockLamb();
   const { personalTasks, sharedTasks, completeTask, addTask, deleteTask, updateTask, pinTask } = useMockTasks();
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { myItems, consumeItem, addItem } = useMockInventory();
   const { logs, appendTaskComplete, appendFeed, removeByTaskId } = useMockActivityLog();
+
+  function handleSheepAreaClick() {
+    if (sheepRevertTimer.current) clearTimeout(sheepRevertTimer.current);
+    setSheepMoodOverride('happy');
+    setSheepCelebKey((k) => k + 1);
+    sheepRevertTimer.current = setTimeout(() => setSheepMoodOverride(null), SHEEP_HAPPY_MS);
+  }
 
   function handleCompleteTask(taskId: string) {
     const task = [...personalTasks, ...sharedTasks].find((t) => t.id === taskId);
@@ -247,12 +262,21 @@ function DashboardContent() {
         ))}
         {/* Mochi in grass, center-bottom — 3D sheep scene */}
         <SheepSceneWrapper
-          lambMood={lamb.moodState}
+          displayMood={sheepMoodOverride ?? SHEEP_MOOD_MAP[lamb.moodState]}
+          celebrationKey={sheepCelebKey}
           lambName={lamb.name}
           lambLevel={lamb.level}
           onFeedClick={() => setShowFeedModal(true)}
         />
       </div>
+
+      {/* Transparent click zone over the sheep — sits above the background but captures clicks to the sheep area */}
+      <div
+        className="fixed bottom-0 left-1/2 -translate-x-1/2 cursor-pointer"
+        style={{ width: 260, height: 340, zIndex: 5 }}
+        onClick={handleSheepAreaClick}
+        aria-label="Pet the sheep"
+      />
 
       {/* Header */}
       <header className="bg-white/30 backdrop-blur-md px-5 py-3 flex items-center justify-between sticky top-0 z-10 border-b border-white/30" style={{ backdropFilter: 'blur(16px) saturate(160%)', WebkitBackdropFilter: 'blur(16px) saturate(160%)' }}>
