@@ -16,9 +16,9 @@ interface RewardModalProps {
 }
 
 const itemEmoji: Record<string, string> = {
-  'Basic Hay': '🌾',
-  'Premium Clover': '🍀',
-  'Berry Treat': '🍓',
+  '普通干草': '🌾',
+  '优质苜蓿': '🍀',
+  '莓果零食': '🍓',
 };
 
 export default function RewardModal({ isOpen, onClose, task, reward }: RewardModalProps) {

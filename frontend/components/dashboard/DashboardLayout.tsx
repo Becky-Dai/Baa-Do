@@ -79,9 +79,9 @@ export default function DashboardLayout() {
       addLambExp(reward.lambExp);
       if (reward.item) {
         const itemEffects: Record<string, { fullnessBoost: number; moodBoost: number; bondBoost: number }> = {
-          'Basic Hay': { fullnessBoost: 15, moodBoost: 0, bondBoost: 0 },
-          'Premium Clover': { fullnessBoost: 30, moodBoost: 5, bondBoost: 0 },
-          'Berry Treat': { fullnessBoost: 0, moodBoost: 20, bondBoost: 5 },
+          '普通干草': { fullnessBoost: 15, moodBoost: 0, bondBoost: 0 },
+          '优质苜蓿': { fullnessBoost: 30, moodBoost: 5, bondBoost: 0 },
+          '莓果零食': { fullnessBoost: 0, moodBoost: 20, bondBoost: 5 },
         };
         addItem(reward.item, 'food', itemEffects[reward.item] ?? {});
       }

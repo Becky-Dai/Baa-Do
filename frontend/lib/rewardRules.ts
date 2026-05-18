@@ -9,11 +9,11 @@ import type { LambMoodState } from '../types/lamb';
 export function calcPersonalReward(difficulty: TaskDifficulty): TaskReward {
   switch (difficulty) {
     case 'easy':
-      return { baaCoins: 5, lambExp: 5, bondIncrease: 5, item: 'Basic Hay', homeExp: 0, meadowElement: null };
+      return { baaCoins: 5, lambExp: 5, bondIncrease: 5, item: '普通干草', homeExp: 0, meadowElement: null };
     case 'medium':
-      return { baaCoins: 12, lambExp: 10, bondIncrease: 10, item: 'Premium Clover', homeExp: 0, meadowElement: null };
+      return { baaCoins: 12, lambExp: 10, bondIncrease: 10, item: '优质苜蓿', homeExp: 0, meadowElement: null };
     case 'hard':
-      return { baaCoins: 25, lambExp: 20, bondIncrease: 15, item: 'Berry Treat', homeExp: 0, meadowElement: null };
+      return { baaCoins: 25, lambExp: 20, bondIncrease: 15, item: '莓果零食', homeExp: 0, meadowElement: null };
   }
 }
 
