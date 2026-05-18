@@ -25,6 +25,7 @@ export interface ActivityLogEntry {
   action: string;
   timestamp: string;
   isPublic: boolean;
+  taskId?: string;
 }
 
 export interface MeadowElement {

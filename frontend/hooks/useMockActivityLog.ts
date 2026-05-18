@@ -30,9 +30,14 @@ export function useMockActivityLog() {
       action,
       timestamp: new Date().toISOString(),
       isPublic: true,
+      taskId: task.id,
     };
 
     setLogs((prev) => [...prev, entry]);
+  }
+
+  function removeByTaskId(taskId: string) {
+    setLogs((prev) => prev.filter((l) => l.taskId !== taskId));
   }
 
   function appendFeed(lambName: string, itemName: string, userName: string) {
@@ -47,5 +52,5 @@ export function useMockActivityLog() {
     setLogs((prev) => [...prev, entry]);
   }
 
-  return { logs, appendTaskComplete, appendFeed };
+  return { logs, appendTaskComplete, appendFeed, removeByTaskId };
 }

@@ -33,7 +33,7 @@ export default function DashboardLayout() {
   const { lamb, feedLamb, addLambExp } = useMockLamb();
   const { personalTasks, sharedTasks, completeTask, addTask } = useMockTasks();
   const { myItems, consumeItem, addItem } = useMockInventory();
-  const { logs, appendTaskComplete, appendFeed } = useMockActivityLog();
+  const { logs, appendTaskComplete, appendFeed, removeByTaskId } = useMockActivityLog();
 
   function handleCompleteTask(taskId: string) {
     const task = [...personalTasks, ...sharedTasks].find((t) => t.id === taskId);
@@ -68,6 +68,11 @@ export default function DashboardLayout() {
   function handleUncompleteTask(taskId: string) {
     const task = [...personalTasks, ...sharedTasks].find((t) => t.id === taskId);
     if (task) setUndoTask(task);
+  }
+
+  function confirmUndo(taskId: string) {
+    completeTask(taskId);
+    removeByTaskId(taskId);
   }
 
   function handleFeed(item: typeof myItems[0]) {
@@ -209,7 +214,7 @@ export default function DashboardLayout() {
       <UndoConfirmModal
         isOpen={!!undoTask}
         onClose={() => setUndoTask(null)}
-        onConfirm={() => undoTask && completeTask(undoTask.id)}
+        onConfirm={() => undoTask && confirmUndo(undoTask.id)}
         task={undoTask}
       />
     </div>
