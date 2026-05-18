@@ -187,10 +187,12 @@ export default function TaskCard({
         )}
 
         {/* Priority sheep */}
-        <span className="ml-auto flex items-center gap-px">
+        <span className="ml-auto flex items-center gap-0.5">
           {[1,2,3,4].map((i) => (
-            <span key={i} className="text-[11px] leading-none select-none"
-              style={i <= task.priority ? {} : { filter: 'grayscale(0.6)', opacity: 0.4 }}>
+            <span key={i} className="text-base leading-none select-none"
+              style={i <= task.priority
+                ? { filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.15))' }
+                : { filter: 'grayscale(1)', opacity: 0.28 }}>
               🐑
             </span>
           ))}
