@@ -5,7 +5,7 @@
 
 import type { UserId } from './user';
 
-export type ItemType = 'food' | 'outfit' | 'toy' | 'meadow_element';
+export type ItemType = 'food' | 'outfit' | 'toy' | 'meadow_element' | 'decoration';
 
 export interface InventoryItem {
   id: string;
@@ -29,6 +29,13 @@ export interface ActivityLogEntry {
   timestamp: string;
   isPublic: boolean;
   taskId?: string;
+}
+
+export interface PlacedDecoration {
+  id: string;
+  itemName: string;
+  x: number;
+  z: number;
 }
 
 export interface MeadowElement {

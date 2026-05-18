@@ -156,6 +156,36 @@ export const mockInventory: InventoryItem[] = [
     moodBoost: 20,
     bondBoost: 5,
   },
+  {
+    id: 'deco-001',
+    name: '石头',
+    type: 'decoration',
+    quantity: 3,
+    ownerId: 'user-beiqi',
+    fullnessBoost: 0,
+    moodBoost: 0,
+    bondBoost: 0,
+  },
+  {
+    id: 'deco-002',
+    name: '小花',
+    type: 'decoration',
+    quantity: 2,
+    ownerId: 'user-beiqi',
+    fullnessBoost: 0,
+    moodBoost: 0,
+    bondBoost: 0,
+  },
+  {
+    id: 'deco-003',
+    name: '木桩',
+    type: 'decoration',
+    quantity: 1,
+    ownerId: 'user-beiqi',
+    fullnessBoost: 0,
+    moodBoost: 0,
+    bondBoost: 0,
+  },
 ];
 
 export const mockActivityLogs: ActivityLogEntry[] = [

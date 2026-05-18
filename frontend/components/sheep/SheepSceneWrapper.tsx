@@ -6,6 +6,7 @@
  */
 'use client';
 import dynamic from 'next/dynamic';
+import type { PlacedDecoration } from '../../types/economy';
 import type { LambMoodState } from '../../types/lamb';
 import type { SheepMood } from './SheepModel';
 
@@ -27,14 +28,14 @@ interface SheepSceneWrapperProps {
   lambName: string;
   lambLevel: number;
   onFeedClick: () => void;
+  isDecorating?: boolean;
+  placedDecorations?: PlacedDecoration[];
+  onGroundClick?: (x: number, z: number) => void;
 }
 
 export function SheepSceneWrapper({
-  displayMood,
-  celebrationKey,
-  lambName,
-  lambLevel,
-  onFeedClick,
+  displayMood, celebrationKey, lambName, lambLevel, onFeedClick,
+  isDecorating = false, placedDecorations = [], onGroundClick,
 }: SheepSceneWrapperProps) {
   return (
     <div
@@ -46,6 +47,9 @@ export function SheepSceneWrapper({
           mood={displayMood}
           celebrationKey={celebrationKey}
           onSheepClick={() => {}}
+          isDecorating={isDecorating}
+          placedDecorations={placedDecorations}
+          onGroundClick={onGroundClick}
         />
       </div>
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0.5">

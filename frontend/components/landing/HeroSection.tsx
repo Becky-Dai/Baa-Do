@@ -28,9 +28,9 @@ export default function HeroSection() {
       </p>
 
       <div className="flex flex-col gap-3 w-full max-w-xs mt-2">
-        <Link href="/create-room">
+        <Link href="/login">
           <Button size="lg" variant="primary" className="w-full">
-            创建房间 Create Room
+            登录 / 注册
           </Button>
         </Link>
         <Link href="/join">

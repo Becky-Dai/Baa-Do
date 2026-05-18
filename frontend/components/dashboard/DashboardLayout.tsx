@@ -26,6 +26,9 @@ import { LangProvider, useLang, useT } from '../../contexts/LangContext';
 import type { LangCode } from '../../lib/i18n/translations';
 import { SheepSceneWrapper, SHEEP_MOOD_MAP } from '../sheep/SheepSceneWrapper';
 import type { SheepMood } from '../sheep/SheepModel';
+import { useMockDecorations } from '../../hooks/useMockDecorations';
+import InventoryModal from '../ui/InventoryModal';
+import type { InventoryItem } from '../../types/economy';
 
 const LANGUAGES = [
   { code: 'zh-CN', label: '简体中文', short: '简中' },
@@ -144,6 +147,63 @@ function SheepSign({ label }: { label: string }) {
 
 const SHEEP_HAPPY_MS = 2500;
 
+function AvatarMenu({ user }: { user: { name: string; avatarColor: string } }) {
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  function handleOpen() {
+    if (btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 6, left: r.left });
+    }
+    setOpen((v) => !v);
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: MouseEvent) {
+      if (!menuRef.current?.contains(e.target as Node) && !btnRef.current?.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
+
+  const menu = open ? createPortal(
+    <div
+      ref={menuRef}
+      style={{ position: 'fixed', top: pos.top, left: pos.left, zIndex: 9999, minWidth: 130, borderRadius: 14, overflow: 'hidden', background: '#fff', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 8px 24px rgba(0,0,0,0.13)' }}
+    >
+      <div className="px-4 py-2.5 border-b border-gray-100">
+        <p className="text-sm font-semibold text-gray-800">{user.name}</p>
+      </div>
+      <button
+        onClick={() => { window.location.href = '/login'; }}
+        className="w-full px-4 py-2.5 text-left text-sm text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2"
+      >
+        <span>↩</span> 退出登录
+      </button>
+    </div>,
+    document.body
+  ) : null;
+
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        ref={btnRef}
+        onClick={handleOpen}
+        className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold hover:opacity-80 transition-opacity"
+        style={{ backgroundColor: user.avatarColor }}
+      >
+        {user.name[0]}
+      </button>
+      <span className="text-sm font-semibold text-green-900">{user.name}</span>
+      {menu}
+    </div>
+  );
+}
+
 function DashboardContent() {
   const t = useT();
   const [showFeedModal, setShowFeedModal] = useState(false);
@@ -152,10 +212,17 @@ function DashboardContent() {
   const [rewardData, setRewardData] = useState<TaskReward | null>(null);
   const [undoTask, setUndoTask] = useState<Task | null>(null);
 
-  // Sheep interaction state (managed here so the DOM click zone can trigger it)
+  // Sheep interaction state
   const [sheepMoodOverride, setSheepMoodOverride] = useState<SheepMood | null>(null);
   const [sheepCelebKey, setSheepCelebKey] = useState(0);
   const sheepRevertTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Inventory + decoration state
+  const [showInventory, setShowInventory] = useState(false);
+  const [inventoryTab, setInventoryTab] = useState<'food' | 'decoration'>('food');
+  const [isDecorating, setIsDecorating] = useState(false);
+  const [pendingDecoItem, setPendingDecoItem] = useState<InventoryItem | null>(null);
+  const { placedDecorations, placeDecoration } = useMockDecorations();
 
   const { room, currentUser, buddyUser } = useMockRoom();
   const { lamb, feedLamb, addLambExp } = useMockLamb();
@@ -165,10 +232,29 @@ function DashboardContent() {
   const { logs, appendTaskComplete, appendFeed, removeByTaskId } = useMockActivityLog();
 
   function handleSheepAreaClick() {
+    if (isDecorating) return;
     if (sheepRevertTimer.current) clearTimeout(sheepRevertTimer.current);
     setSheepMoodOverride('happy');
     setSheepCelebKey((k) => k + 1);
     sheepRevertTimer.current = setTimeout(() => setSheepMoodOverride(null), SHEEP_HAPPY_MS);
+  }
+
+  function handlePlaceDecoration(item: InventoryItem) {
+    setPendingDecoItem(item);
+    setIsDecorating(true);
+  }
+
+  function handleGroundClick(x: number, z: number) {
+    if (!pendingDecoItem) return;
+    placeDecoration(pendingDecoItem.name, x, z);
+    consumeItem(pendingDecoItem.id);
+    setIsDecorating(false);
+    setPendingDecoItem(null);
+  }
+
+  function cancelDecoration() {
+    setIsDecorating(false);
+    setPendingDecoItem(null);
   }
 
   function handleCompleteTask(taskId: string) {
@@ -231,6 +317,11 @@ function DashboardContent() {
     '莓果零食': 'item.berry',
   };
 
+  const itemEmoji: Record<string, string> = {
+    '普通干草': '🌾', '优质苜蓿': '🍀', '莓果零食': '🍓',
+    '石头': '🪨', '小花': '🌸', '木桩': '🪵',
+  };
+
   function handleFeed(item: typeof myItems[0]) {
     feedLamb(item);
     consumeItem(item.id);
@@ -242,8 +333,11 @@ function DashboardContent() {
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
 
-      {/* ── Meadow background (fixed, full page) ── */}
-      <div className="fixed inset-0 -z-10" style={{ background: 'linear-gradient(to bottom, #87ceeb 0%, #b8e4f7 40%, #6dbf6d 60%, #3a9e3a 100%)' }}>
+      {/* ── Meadow background (fixed, full page) — lifts to front during decoration mode ── */}
+      <div
+        className="fixed inset-0"
+        style={{ background: 'linear-gradient(to bottom, #87ceeb 0%, #b8e4f7 40%, #6dbf6d 60%, #3a9e3a 100%)', zIndex: isDecorating ? 20 : -10 }}
+      >
         {/* Sky clouds */}
         <div className="absolute top-[8%] left-[15%] text-5xl opacity-60 select-none">☁️</div>
         <div className="absolute top-[12%] right-[20%] text-4xl opacity-50 select-none">☁️</div>
@@ -267,44 +361,51 @@ function DashboardContent() {
           lambName={lamb.name}
           lambLevel={lamb.level}
           onFeedClick={() => setShowFeedModal(true)}
+          isDecorating={isDecorating}
+          placedDecorations={placedDecorations}
+          onGroundClick={handleGroundClick}
         />
       </div>
 
-      {/* Transparent click zone over the sheep — sits above the background but captures clicks to the sheep area */}
-      <div
-        className="fixed bottom-0 left-1/2 -translate-x-1/2 cursor-pointer"
-        style={{ width: 260, height: 340, zIndex: 5 }}
-        onClick={handleSheepAreaClick}
-        aria-label="Pet the sheep"
-      />
+      {/* Transparent click zone over the sheep — only active when NOT in decoration mode */}
+      {!isDecorating && (
+        <div
+          className="fixed bottom-0 left-1/2 -translate-x-1/2 cursor-pointer"
+          style={{ width: 260, height: 340, zIndex: 5 }}
+          onClick={handleSheepAreaClick}
+          aria-label="Pet the sheep"
+        />
+      )}
+
+      {/* Decoration mode banner */}
+      {isDecorating && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 flex items-center gap-3 px-5 py-2.5 rounded-full text-sm font-semibold text-white" style={{ zIndex: 25, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)' }}>
+          <span>{pendingDecoItem ? `${itemEmoji[pendingDecoItem.name] ?? '🪴'} 放置 ${pendingDecoItem.name}` : '放置模式'}</span>
+          <span className="opacity-60">·</span>
+          <span className="opacity-80 text-xs">点击草地放置</span>
+          <button onClick={cancelDecoration} className="ml-1 px-2.5 py-0.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors text-xs">
+            取消
+          </button>
+        </div>
+      )}
 
       {/* Header */}
       <header className="bg-white/30 backdrop-blur-md px-5 py-3 flex items-center justify-between sticky top-0 z-10 border-b border-white/30" style={{ backdropFilter: 'blur(16px) saturate(160%)', WebkitBackdropFilter: 'blur(16px) saturate(160%)' }}>
+        <AvatarMenu user={currentUser} />
         <div className="flex items-center gap-2">
-          <div
-            className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-            style={{ backgroundColor: currentUser.avatarColor }}
+          <button
+            onClick={() => { setInventoryTab('food'); setShowInventory(true); }}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-green-900 transition-colors hover:bg-white/40"
+            style={{ backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', backgroundColor:'rgba(255,255,255,0.25)', border:'1px solid rgba(255,255,255,0.5)' }}
           >
-            {currentUser.name[0]}
-          </div>
-          <span className="text-sm font-semibold text-green-900">{currentUser.name}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {([{ emoji: '🧺', label: t('header.inventory') }, { emoji: '🏠', label: t('header.meadow') }] as { emoji: string; label: string }[]).map(({ emoji, label }) => (
-            <button
-              key={label}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-green-900 transition-colors hover:bg-white/40"
-              style={{
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                backgroundColor: 'rgba(255,255,255,0.25)',
-                border: '1px solid rgba(255,255,255,0.5)',
-              }}
-            >
-              <span>{emoji}</span>
-              <span>{label}</span>
-            </button>
-          ))}
+            <span>🧺</span><span>{t('header.inventory')}</span>
+          </button>
+          <button
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-green-900 transition-colors hover:bg-white/40"
+            style={{ backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', backgroundColor:'rgba(255,255,255,0.25)', border:'1px solid rgba(255,255,255,0.5)' }}
+          >
+            <span>🏠</span><span>{t('header.meadow')}</span>
+          </button>
           <span className="text-xs text-amber-700 font-semibold bg-amber-100/60 px-2 py-1 rounded-full">
             🪙 {currentUser.baaCoins}
           </span>
@@ -385,6 +486,16 @@ function DashboardContent() {
         onClose={() => setUndoTask(null)}
         onConfirm={() => undoTask && confirmUndo(undoTask.id)}
         task={undoTask}
+      />
+
+      <InventoryModal
+        isOpen={showInventory}
+        onClose={() => setShowInventory(false)}
+        items={myItems}
+        defaultTab={inventoryTab}
+        lambName={lamb.name}
+        onFeed={handleFeed}
+        onPlaceDecoration={handlePlaceDecoration}
       />
     </div>
   );

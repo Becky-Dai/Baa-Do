@@ -1,16 +1,10 @@
 /**
- * 中文：BaaDo Web Preview Landing Page，产品入口页面。
- * English: BaaDo Web Preview Landing Page - the product entry page.
+ * 中文：BaaDo Web Preview 首页，合并了品牌介绍与登录/注册表单的左右布局。
+ * English: BaaDo Web Preview entry page - combined landing and auth in a left-right layout.
  */
 
-import HeroSection from '../components/landing/HeroSection';
-import FeatureList from '../components/landing/FeatureList';
+import LandingWithAuth from '../components/landing/LandingWithAuth';
 
 export default function LandingPage() {
-  return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 to-amber-50">
-      <HeroSection />
-      <FeatureList />
-    </main>
-  );
+  return <LandingWithAuth />;
 }
