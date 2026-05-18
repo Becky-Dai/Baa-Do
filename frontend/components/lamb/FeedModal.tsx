@@ -6,11 +6,13 @@
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import type { InventoryItem } from '../../types/economy';
+import { useT } from '../../contexts/LangContext';
 
 interface FeedModalProps {
   isOpen: boolean;
   onClose: () => void;
   items: InventoryItem[];
+  lambName?: string;
   onFeed: (item: InventoryItem) => void;
 }
 
@@ -20,21 +22,23 @@ const itemEmoji: Record<string, string> = {
   '莓果零食': '🍓',
 };
 
-export default function FeedModal({ isOpen, onClose, items, onFeed }: FeedModalProps) {
+export default function FeedModal({ isOpen, onClose, items, lambName = 'Mochi', onFeed }: FeedModalProps) {
+  const t = useT();
+
   function handleFeed(item: InventoryItem) {
     onFeed(item);
     onClose();
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="喂 Mochi 🐑">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('feed.title', { name: lambName })}>
       {items.length === 0 ? (
         <div className="text-center py-6">
           <p className="text-4xl mb-2">🪹</p>
-          <p className="text-sm text-gray-500">库存空空如也</p>
-          <p className="text-xs text-gray-400 mt-1">完成任务获得食物吧！</p>
+          <p className="text-sm text-gray-500">{t('feed.empty')}</p>
+          <p className="text-xs text-gray-400 mt-1">{t('feed.emptyHint')}</p>
           <Button variant="ghost" size="sm" onClick={onClose} className="mt-4">
-            关闭
+            {t('feed.close')}
           </Button>
         </div>
       ) : (
@@ -49,16 +53,16 @@ export default function FeedModal({ isOpen, onClose, items, onFeed }: FeedModalP
               <div className="flex-1">
                 <p className="font-semibold text-sm text-amber-800">{item.name}</p>
                 <p className="text-xs text-gray-500">
-                  {item.fullnessBoost > 0 && `+${item.fullnessBoost} 饱腹 `}
-                  {item.moodBoost > 0 && `+${item.moodBoost} 心情 `}
-                  {item.bondBoost > 0 && `+${item.bondBoost} 亲密度`}
+                  {item.fullnessBoost > 0 && `+${item.fullnessBoost} ${t('feed.fullness')} `}
+                  {item.moodBoost > 0 && `+${item.moodBoost} ${t('feed.mood')} `}
+                  {item.bondBoost > 0 && `+${item.bondBoost} ${t('feed.bond')}`}
                 </p>
               </div>
               <span className="text-xs text-gray-400">x{item.quantity}</span>
             </button>
           ))}
           <Button variant="ghost" size="sm" onClick={onClose} className="mt-1">
-            取消
+            {t('feed.cancel')}
           </Button>
         </div>
       )}

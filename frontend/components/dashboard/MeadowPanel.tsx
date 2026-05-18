@@ -9,6 +9,7 @@ import { useState } from 'react';
 import type { PairRoom } from '../../types/room';
 import type { MeadowElement } from '../../types/economy';
 import type { PairLamb } from '../../types/lamb';
+import { useT } from '../../contexts/LangContext';
 
 interface MeadowPanelProps {
   room: PairRoom;
@@ -16,14 +17,6 @@ interface MeadowPanelProps {
   lamb: PairLamb;
   onFeed: () => void;
 }
-
-const homeLevelLabel: Record<number, string> = {
-  1: '基础草地小窝',
-  2: '温馨草地',
-  3: '暖色草地',
-  4: '小花园',
-  5: '双人散步场景',
-};
 
 const homeLevelExpNeeded: Record<number, number> = {
   1: 30,
@@ -54,12 +47,15 @@ function CollapseHeader({ title, open, onToggle }: { title: string; open: boolea
 }
 
 export default function MeadowPanel({ room, meadowElements, lamb, onFeed }: MeadowPanelProps) {
+  const t = useT();
   const [meadowOpen, setMeadowOpen] = useState(true);
   const [mochiOpen, setMochiOpen] = useState(true);
 
   const nextLevelExp = homeLevelExpNeeded[room.homeLevel] ?? 999;
   const prevLevelExp = homeLevelExpNeeded[room.homeLevel - 1] ?? 0;
   const progress = Math.min(100, ((room.homeExp - prevLevelExp) / (nextLevelExp - prevLevelExp)) * 100);
+
+  const levelLabelKey = `meadow.lv${room.homeLevel}` as 'meadow.lv1' | 'meadow.lv2' | 'meadow.lv3' | 'meadow.lv4' | 'meadow.lv5';
 
   return (
     <div className="flex flex-col gap-3">
@@ -68,17 +64,17 @@ export default function MeadowPanel({ room, meadowElements, lamb, onFeed }: Mead
       <div className="rounded-3xl overflow-hidden" style={glassCard}>
         <div className="px-5 py-3">
           <CollapseHeader
-            title={`🌿 草地等级 · Lv.${room.homeLevel}`}
+            title={t('meadow.levelTitle', { lv: room.homeLevel })}
             open={meadowOpen}
             onToggle={() => setMeadowOpen((v) => !v)}
           />
         </div>
         {meadowOpen && (
           <div className="px-5 pb-4">
-            <p className="text-sm font-bold text-green-900 mb-2">{homeLevelLabel[room.homeLevel]}</p>
+            <p className="text-sm font-bold text-green-900 mb-2">{t(levelLabelKey)}</p>
             <div className="flex justify-between text-xs text-green-700 mb-1">
-              <span>{room.homeExp} 经验</span>
-              <span>→ {nextLevelExp} 经验</span>
+              <span>{t('meadow.exp', { exp: room.homeExp })}</span>
+              <span>{t('meadow.nextExp', { exp: nextLevelExp })}</span>
             </div>
             <div className="w-full bg-white/40 rounded-full h-2">
               <div className="h-2 rounded-full bg-green-400 transition-all duration-300" style={{ width: `${progress}%` }} />
@@ -100,14 +96,14 @@ export default function MeadowPanel({ room, meadowElements, lamb, onFeed }: Mead
           <div className="px-4 pb-4">
             <div className="space-y-1.5 mb-3">
               <div className="flex items-center gap-2 text-xs">
-                <span className="text-green-700 w-10">饱腹</span>
+                <span className="text-green-700 w-10">{t('meadow.fullness')}</span>
                 <div className="flex-1 bg-white/40 rounded-full h-1.5">
                   <div className="h-1.5 rounded-full bg-amber-400 transition-all" style={{ width: `${lamb.fullness}%` }} />
                 </div>
                 <span className="text-amber-700 w-6 text-right">{lamb.fullness}</span>
               </div>
               <div className="flex items-center gap-2 text-xs">
-                <span className="text-green-700 w-10">心情</span>
+                <span className="text-green-700 w-10">{t('meadow.mood')}</span>
                 <div className="flex-1 bg-white/40 rounded-full h-1.5">
                   <div className="h-1.5 rounded-full bg-pink-400 transition-all" style={{ width: `${lamb.mood}%` }} />
                 </div>
@@ -118,7 +114,7 @@ export default function MeadowPanel({ room, meadowElements, lamb, onFeed }: Mead
               onClick={onFeed}
               className="w-full bg-amber-400/80 hover:bg-amber-400 text-white font-semibold rounded-2xl py-2 text-sm transition-colors"
             >
-              喂 {lamb.name} 🌾
+              {t('meadow.feedBtn', { name: lamb.name })}
             </button>
           </div>
         )}

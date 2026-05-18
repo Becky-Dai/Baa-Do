@@ -6,15 +6,18 @@
 import ActivityLog from '../buddy/ActivityLog';
 import type { User } from '../../types/user';
 import type { ActivityLogEntry } from '../../types/economy';
+import { useT } from '../../contexts/LangContext';
 
 interface BuddyPanelProps {
   currentUser: User;
   buddyUser: User | null;
   activityLogs: ActivityLogEntry[];
   allUsers: User[];
+  lambName?: string;
 }
 
 function BondCard({ user, isCurrentUser }: { user: User; isCurrentUser: boolean }) {
+  const t = useT();
   const bondPercent = Math.min(100, (user.bondWithLamb / 300) * 100);
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3">
@@ -28,7 +31,7 @@ function BondCard({ user, isCurrentUser }: { user: User; isCurrentUser: boolean 
         <div className="flex items-center gap-2">
           <p className="text-sm font-semibold text-gray-800">{user.name}</p>
           {isCurrentUser && (
-            <span className="text-xs bg-green-100 text-green-600 px-1.5 py-0.5 rounded-full">你</span>
+            <span className="text-xs bg-green-100 text-green-600 px-1.5 py-0.5 rounded-full">{t('buddy.you')}</span>
           )}
         </div>
         <div className="flex items-center gap-2 mt-1">
@@ -38,7 +41,7 @@ function BondCard({ user, isCurrentUser }: { user: User; isCurrentUser: boolean 
               style={{ width: `${bondPercent}%` }}
             />
           </div>
-          <span className="text-xs text-pink-500 font-semibold">亲密度 Lv.{user.bondLevel}</span>
+          <span className="text-xs text-pink-500 font-semibold">{t('buddy.bondLv', { lv: user.bondLevel })}</span>
         </div>
       </div>
     </div>
@@ -50,12 +53,14 @@ export default function BuddyPanel({
   buddyUser,
   activityLogs,
   allUsers,
+  lambName = 'Mochi',
 }: BuddyPanelProps) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-4">
       {/* Bond cards */}
       <section>
-        <h3 className="text-sm font-bold text-green-800 mb-2">与 Mochi 的亲密度</h3>
+        <h3 className="text-sm font-bold text-green-800 mb-2">{t('buddy.bondTitle', { lamb: lambName })}</h3>
         <div className="flex flex-col gap-2">
           <BondCard user={currentUser} isCurrentUser />
           {buddyUser && <BondCard user={buddyUser} isCurrentUser={false} />}
@@ -64,7 +69,7 @@ export default function BuddyPanel({
 
       {/* Activity log */}
       <section>
-        <h3 className="text-sm font-bold text-green-800 mb-2">活动记录</h3>
+        <h3 className="text-sm font-bold text-green-800 mb-2">{t('buddy.logTitle')}</h3>
         <ActivityLog logs={activityLogs} users={allUsers} />
       </section>
     </div>

@@ -23,6 +23,9 @@ export interface ActivityLogEntry {
   actorId: UserId;
   actorName: string;
   action: string;
+  /** Structured action for i18n — if present, ActivityLog renders this instead of `action`. */
+  actionKey?: string;
+  actionVars?: Record<string, string>;
   timestamp: string;
   isPublic: boolean;
   taskId?: string;

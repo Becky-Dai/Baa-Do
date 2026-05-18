@@ -22,6 +22,8 @@ import { calcPersonalReward, calcSharedReward } from '../../lib/rewardRules';
 import { mockMeadowElements, mockUsers } from '../../data/mockData';
 import { useMockActivityLog } from '../../hooks/useMockActivityLog';
 import type { Task, TaskReward } from '../../types/task';
+import { LangProvider, useLang, useT } from '../../contexts/LangContext';
+import type { LangCode } from '../../lib/i18n/translations';
 
 const LANGUAGES = [
   { code: 'zh-CN', label: '简体中文', short: '简中' },
@@ -33,7 +35,7 @@ const LANGUAGES = [
 ];
 
 function LangSelector() {
-  const [lang, setLang] = useState('zh-CN');
+  const { lang, setLang } = useLang();
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, right: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -71,7 +73,7 @@ function LangSelector() {
       {LANGUAGES.map((l) => (
         <button
           key={l.code}
-          onClick={() => { setLang(l.code); setOpen(false); }}
+          onClick={() => { setLang(l.code as LangCode); setOpen(false); }}
           className={`w-full px-4 py-2.5 text-left text-sm flex items-center justify-between transition-colors ${
             l.code === lang ? 'bg-green-50 text-green-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'
           }`}
@@ -138,7 +140,8 @@ function SheepSign({ label }: { label: string }) {
   );
 }
 
-export default function DashboardLayout() {
+function DashboardContent() {
+  const t = useT();
   const [showFeedModal, setShowFeedModal] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
   const [rewardTask, setRewardTask] = useState<Task | null>(null);
@@ -206,10 +209,16 @@ export default function DashboardLayout() {
     setEditingTask(null);
   }
 
+  const itemNameToKey: Record<string, string> = {
+    '普通干草': 'item.hay',
+    '优质苜蓿': 'item.clover',
+    '莓果零食': 'item.berry',
+  };
+
   function handleFeed(item: typeof myItems[0]) {
     feedLamb(item);
     consumeItem(item.id);
-    appendFeed(lamb.name, item.name, currentUser.name);
+    appendFeed(lamb.name, itemNameToKey[item.name] ?? item.name, currentUser.name);
   }
 
   const placedElements = mockMeadowElements.filter((e) => e.isPlaced);
@@ -266,7 +275,7 @@ export default function DashboardLayout() {
           <span className="text-sm font-semibold text-green-900">{currentUser.name}</span>
         </div>
         <div className="flex items-center gap-2">
-          {[{ emoji: '🧺', label: '库存' }, { emoji: '🏠', label: '草地' }].map(({ emoji, label }) => (
+          {([{ emoji: '🧺', label: t('header.inventory') }, { emoji: '🏠', label: t('header.meadow') }] as { emoji: string; label: string }[]).map(({ emoji, label }) => (
             <button
               key={label}
               className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-green-900 transition-colors hover:bg-white/40"
@@ -292,7 +301,7 @@ export default function DashboardLayout() {
       <div className="flex flex-1 gap-0 divide-x divide-white/20">
         {/* Today */}
         <section className="flex-1 overflow-y-auto px-4 py-4">
-          <SheepSign label="今日" />
+          <SheepSign label={t('col.today')} />
           <TodayPanel
             personalTasks={personalTasks}
             sharedTasks={sharedTasks}
@@ -309,18 +318,19 @@ export default function DashboardLayout() {
 
         {/* Meadow info — transparent center column, Mochi is in background */}
         <section className="flex-1 overflow-y-auto px-4 py-4">
-          <SheepSign label="草地" />
+          <SheepSign label={t('col.meadow')} />
           <MeadowPanel room={room} meadowElements={mockMeadowElements} lamb={lamb} onFeed={() => setShowFeedModal(true)} />
         </section>
 
         {/* Buddy */}
         <section className="flex-1 overflow-y-auto px-4 py-4">
-          <SheepSign label="搭子" />
+          <SheepSign label={t('col.buddy')} />
           <BuddyPanel
             currentUser={currentUser}
             buddyUser={buddyUser}
             activityLogs={logs}
             allUsers={mockUsers}
+            lambName={lamb.name}
           />
         </section>
       </div>
@@ -362,5 +372,13 @@ export default function DashboardLayout() {
         task={undoTask}
       />
     </div>
+  );
+}
+
+export default function DashboardLayout() {
+  return (
+    <LangProvider>
+      <DashboardContent />
+    </LangProvider>
   );
 }

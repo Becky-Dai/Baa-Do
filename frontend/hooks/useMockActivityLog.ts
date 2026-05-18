@@ -14,20 +14,28 @@ export function useMockActivityLog() {
   const [logs, setLogs] = useState<ActivityLogEntry[]>(mockActivityLogs);
 
   function appendTaskComplete(task: Task, userName: string) {
-    // Private tasks must not leak title
     const isPrivate = task.visibility === 'private';
-    const action =
-      task.type === 'shared'
-        ? `完成了共同任务「${task.title}」的自己部分`
-        : isPrivate
-        ? '完成了一个个人任务 🌾'
-        : `完成了个人任务「${task.title}」🌾`;
+    let actionKey: string;
+    let actionVars: Record<string, string>;
+
+    if (task.type === 'shared') {
+      actionKey = 'log.action.completeShared';
+      actionVars = { title: task.title };
+    } else if (isPrivate) {
+      actionKey = 'log.action.completePersonalPrivate';
+      actionVars = {};
+    } else {
+      actionKey = 'log.action.completePersonal';
+      actionVars = { title: task.title };
+    }
 
     const entry: ActivityLogEntry = {
       id: `log-${Date.now()}`,
       actorId: CURRENT_USER_ID,
       actorName: userName,
-      action,
+      action: '',
+      actionKey,
+      actionVars,
       timestamp: new Date().toISOString(),
       isPublic: true,
       taskId: task.id,
@@ -40,12 +48,14 @@ export function useMockActivityLog() {
     setLogs((prev) => prev.filter((l) => l.taskId !== taskId));
   }
 
-  function appendFeed(lambName: string, itemName: string, userName: string) {
+  function appendFeed(lambName: string, itemKey: string, userName: string) {
     const entry: ActivityLogEntry = {
       id: `log-${Date.now()}`,
       actorId: CURRENT_USER_ID,
       actorName: userName,
-      action: `喂了 ${lambName} ${itemName} 🍽️`,
+      action: '',
+      actionKey: 'log.action.feed',
+      actionVars: { lamb: lambName, itemKey },
       timestamp: new Date().toISOString(),
       isPublic: true,
     };

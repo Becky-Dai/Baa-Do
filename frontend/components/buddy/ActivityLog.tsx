@@ -8,6 +8,7 @@
 import { useState, useMemo } from 'react';
 import type { ActivityLogEntry } from '../../types/economy';
 import type { User } from '../../types/user';
+import { useT } from '../../contexts/LangContext';
 
 interface ActivityLogProps {
   logs: ActivityLogEntry[];
@@ -38,14 +39,15 @@ function isYesterday(dateKey: string): boolean {
   return dateKey === y.toISOString().slice(0, 10);
 }
 
-function dayLabel(dateKey: string): string {
-  if (isToday(dateKey)) return '今天';
-  if (isYesterday(dateKey)) return '昨天';
-  return formatDate(dateKey + 'T00:00:00Z');
-}
-
 export default function ActivityLog({ logs, users }: ActivityLogProps) {
+  const t = useT();
   const publicLogs = logs.filter((l) => l.isPublic);
+
+  function dayLabel(dateKey: string): string {
+    if (isToday(dateKey)) return t('log.today');
+    if (isYesterday(dateKey)) return t('log.yesterday');
+    return formatDate(dateKey + 'T00:00:00Z');
+  }
 
   const days = useMemo(() => {
     const keys = [...new Set(publicLogs.map((l) => toDateKey(l.timestamp)))].sort().reverse();
@@ -64,8 +66,8 @@ export default function ActivityLog({ logs, users }: ActivityLogProps) {
   if (publicLogs.length === 0) {
     return (
       <div className="text-center py-8 text-gray-400 text-sm">
-        还没有活动记录<br />
-        <span className="text-xs">完成任务后会出现在这里</span>
+        {t('log.empty')}<br />
+        <span className="text-xs">{t('log.emptyHint')}</span>
       </div>
     );
   }
@@ -97,25 +99,19 @@ export default function ActivityLog({ logs, users }: ActivityLogProps) {
       {/* Timeline */}
       <div className="overflow-y-auto max-h-[480px] pr-1">
         {dayLogs.length === 0 ? (
-          <p className="text-center text-xs text-gray-400 py-6">这天没有记录</p>
+          <p className="text-center text-xs text-gray-400 py-6">{t('log.noRecord')}</p>
         ) : (
           <div className="relative pl-8">
-            {/* Vertical line */}
             <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-green-200 rounded-full" />
-
             <div className="flex flex-col gap-4">
-              {dayLogs.map((log, i) => {
+              {dayLogs.map((log) => {
                 const user = users.find((u) => u.id === log.actorId);
-                const isLast = i === dayLogs.length - 1;
                 return (
                   <div key={log.id} className="relative flex items-start gap-3">
-                    {/* Timeline dot */}
                     <div
                       className="absolute -left-5 w-4 h-4 rounded-full border-2 border-white flex-shrink-0 mt-0.5 shadow-sm"
                       style={{ backgroundColor: user?.avatarColor ?? '#e5e7eb' }}
                     />
-
-                    {/* Card */}
                     <div
                       className="flex-1 rounded-2xl p-3"
                       style={{
@@ -130,7 +126,21 @@ export default function ActivityLog({ logs, users }: ActivityLogProps) {
                         <span className="text-xs font-semibold text-green-800">{log.actorName}</span>
                         <span className="text-[10px] text-gray-400">{formatTime(log.timestamp)}</span>
                       </div>
-                      <p className="text-sm text-gray-700 leading-snug">{log.action}</p>
+                      <p className="text-sm text-gray-700 leading-snug">
+                        {log.actionKey
+                          ? (() => {
+                              // Resolve nested translation keys (e.g. itemKey → translated item name)
+                              const vars = log.actionVars ? { ...log.actionVars } : {};
+                              if (vars.itemKey) {
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                vars.item = t(vars.itemKey as any);
+                                delete vars.itemKey;
+                              }
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              return t(log.actionKey as any, vars);
+                            })()
+                          : log.action}
+                      </p>
                     </div>
                   </div>
                 );

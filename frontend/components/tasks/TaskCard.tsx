@@ -8,6 +8,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { Task } from '../../types/task';
+import { useT } from '../../contexts/LangContext';
 
 interface TaskCardProps {
   task: Task;
@@ -29,14 +30,11 @@ const difficultyDot: Record<string, string> = {
   easy: '#4ade80', medium: '#fbbf24', hard: '#f87171',
 };
 
-const difficultyLabel: Record<string, string> = {
-  easy: '轻松', medium: '适中', hard: '挑战',
-};
-
 export default function TaskCard({
   task, currentUserId, buddyName,
   onComplete, onUncomplete, onDelete, onEdit, onPin,
 }: TaskCardProps) {
+  const t = useT();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -59,8 +57,8 @@ export default function TaskCard({
   useEffect(() => {
     if (!menuOpen) return;
     function handleClick(e: MouseEvent) {
-      const t = e.target as Node;
-      if (!dropdownRef.current?.contains(t) && !buttonRef.current?.contains(t)) {
+      const target = e.target as Node;
+      if (!dropdownRef.current?.contains(target) && !buttonRef.current?.contains(target)) {
         setMenuOpen(false);
       }
     }
@@ -81,6 +79,8 @@ export default function TaskCard({
 
   const shared = task.type === 'shared';
   const completedCount = task.completedByIds.length;
+
+  const difficultyKey = `task.${task.difficulty}` as 'task.easy' | 'task.medium' | 'task.hard';
 
   const dropdown = menuOpen ? createPortal(
     <div
@@ -106,7 +106,7 @@ export default function TaskCard({
           <path d="M8.167 1.75 9.333 2.917 7.583 4.667l.583 2.916-1.75 1.75-1.166-2.333-2.333 2.333-.584-.583 2.334-2.333L2.333 5.25l1.75-1.75 2.917.583L8.167 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
           {task.isPinned && <line x1="9.333" y1="9.333" x2="11.667" y2="11.667" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>}
         </svg>
-        {task.isPinned ? '取消置顶' : '置顶'}
+        {task.isPinned ? t('task.unpin') : t('task.pin')}
       </button>
       <div className="h-px bg-gray-100 mx-2" />
       <button
@@ -116,7 +116,7 @@ export default function TaskCard({
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
           <path d="M9.917 1.75a1.237 1.237 0 0 1 1.75 1.75L4.083 11.083l-2.333.584.583-2.334L9.917 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        编辑
+        {t('task.edit')}
       </button>
       <div className="h-px bg-gray-100 mx-2" />
       <button
@@ -127,7 +127,7 @@ export default function TaskCard({
           <path d="M1.75 3.5h10.5M5.25 3.5V2.333A.583.583 0 0 1 5.833 1.75h2.334a.583.583 0 0 1 .583.583V3.5M11.083 3.5l-.583 8.167A.583.583 0 0 1 9.917 12.25H4.083a.583.583 0 0 1-.583-.583L2.917 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M5.833 6.417v3.5M8.167 6.417v3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
         </svg>
-        删除
+        {t('task.delete')}
       </button>
     </div>,
     document.body
@@ -158,7 +158,7 @@ export default function TaskCard({
               <path d="M8.167 1.75 9.333 2.917 7.583 4.667l.583 2.916-1.75 1.75-1.166-2.333-2.333 2.333-.584-.583 2.334-2.333L2.333 5.25l1.75-1.75 2.917.583L8.167 1.75Z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" fillOpacity="0.15"/>
             </svg>
           )}
-          {isPrivate && !isOwnTask ? '私密任务' : task.title}
+          {isPrivate && !isOwnTask ? t('task.privateTitle') : task.title}
           {isPrivate && <span className="ml-1 text-gray-300 text-xs">🔒</span>}
         </p>
 
@@ -183,27 +183,19 @@ export default function TaskCard({
 
       {/* Row 2: meta info */}
       <div className="relative flex items-center gap-2 mt-1.5 pl-7">
-        {/* Category */}
         <span className="text-xs">{categoryEmoji[task.category] ?? '✨'}</span>
-
         <span className="text-gray-300 text-xs">·</span>
-
-        {/* Difficulty dot + label */}
         <span className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full inline-block flex-shrink-0"
             style={{ backgroundColor: difficultyDot[task.difficulty] }} />
-          <span className="text-xs text-gray-500">{difficultyLabel[task.difficulty]}</span>
+          <span className="text-xs text-gray-500">{t(difficultyKey)}</span>
         </span>
-
-        {/* Shared badge */}
         {shared && (
           <>
             <span className="text-gray-300 text-xs">·</span>
-            <span className="text-xs text-green-700 font-medium">共同</span>
+            <span className="text-xs text-green-700 font-medium">{t('task.sharedBadge')}</span>
           </>
         )}
-
-        {/* Priority sheep */}
         <span className="ml-auto flex items-center gap-0.5">
           {[1,2,3,4].map((i) => (
             <span key={i} className="text-base leading-none select-none"
@@ -216,7 +208,7 @@ export default function TaskCard({
         </span>
       </div>
 
-      {/* Row 3: shared progress (only for shared tasks) */}
+      {/* Row 3: shared progress */}
       {shared && (
         <div className="relative flex items-center gap-2 mt-2 pl-7">
           <div className="flex-1 h-1.5 rounded-full bg-white/40">
@@ -226,9 +218,9 @@ export default function TaskCard({
             />
           </div>
           <span className="text-xs text-gray-400 flex-shrink-0">
-            {completedCount === 0 && '等待双方'}
-            {completedCount === 1 && `等待 ${buddyName ?? '搭子'}`}
-            {completedCount >= 2 && '双方完成 ✓'}
+            {completedCount === 0 && t('task.waitingBoth')}
+            {completedCount === 1 && t('task.waitingBuddy', { name: buddyName ?? '搭子' })}
+            {completedCount >= 2 && t('task.bothDone')}
           </span>
         </div>
       )}

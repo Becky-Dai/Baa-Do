@@ -7,6 +7,7 @@ import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import type { TaskReward } from '../../types/task';
 import type { Task } from '../../types/task';
+import { useT } from '../../contexts/LangContext';
 
 interface RewardModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ const itemEmoji: Record<string, string> = {
 };
 
 export default function RewardModal({ isOpen, onClose, task, reward }: RewardModalProps) {
+  const t = useT();
   if (!task || !reward) return null;
 
   const isShared = task.type === 'shared';
@@ -30,44 +32,42 @@ export default function RewardModal({ isOpen, onClose, task, reward }: RewardMod
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col items-center gap-4 text-center">
         <div className="text-5xl animate-bounce">🎉</div>
-        <h2 className="text-lg font-bold text-green-800">任务完成！</h2>
+        <h2 className="text-lg font-bold text-green-800">{t('reward.done')}</h2>
 
         {isShared ? (
           <>
-            <p className="text-sm text-gray-500">共同任务完成，草地成长了！</p>
+            <p className="text-sm text-gray-500">{t('reward.meadowGrew')}</p>
             <div className="w-full bg-green-50 rounded-2xl p-4 space-y-2">
-              <RewardRow emoji="🏡" label="草地经验" value={`+${reward.homeExp}`} />
+              <RewardRow emoji="🏡" label={t('reward.meadowExp')} value={`+${reward.homeExp}`} />
               {reward.meadowElement && (
-                <RewardRow
-                  emoji="🌸"
-                  label="解锁元素"
-                  value={reward.meadowElement}
-                />
+                <RewardRow emoji="🌸" label={t('reward.unlock')} value={reward.meadowElement} />
               )}
             </div>
             <p className="text-xs text-green-600 bg-green-50 rounded-xl px-3 py-2">
-              Mochi 说：两个人一起做到了，草地更漂亮了 🌿
+              {t('reward.mochiShared')}
             </p>
           </>
         ) : (
           <>
-            <p className="text-sm text-gray-500">Mochi 看到了你的努力！</p>
+            <p className="text-sm text-gray-500">{t('reward.lambSaw')}</p>
             <div className="w-full bg-amber-50 rounded-2xl p-4 space-y-2">
               {reward.item && (
-                <RewardRow emoji={itemEmoji[reward.item] ?? '🎁'} label="获得物品" value={reward.item} />
+                <RewardRow emoji={itemEmoji[reward.item] ?? '🎁'} label={t('reward.unlock')} value={reward.item} />
               )}
-              <RewardRow emoji="🪙" label="咩币" value={`+${reward.baaCoins}`} />
-              <RewardRow emoji="⚡" label="小羊经验" value={`+${reward.lambExp}`} />
-              <RewardRow emoji="💛" label="亲密度" value={`+${reward.bondIncrease}`} />
+              <RewardRow emoji="🪙" label={t('reward.coins')} value={`+${reward.baaCoins}`} />
+              <RewardRow emoji="⚡" label={t('reward.lambExp')} value={`+${reward.lambExp}`} />
+              <RewardRow emoji="💛" label={t('reward.bond')} value={`+${reward.bondIncrease}`} />
             </div>
             <p className="text-xs text-amber-600 bg-amber-50 rounded-xl px-3 py-2">
-              Mochi 说：谢谢你，{reward.item ? `我收到了 ${reward.item}！` : '你真棒！'} 🐑
+              {reward.item
+                ? t('reward.mochiItem', { item: reward.item })
+                : t('reward.mochiNoItem')}
             </p>
           </>
         )}
 
         <Button onClick={onClose} size="md" className="w-full">
-          太棒了！
+          {t('reward.awesome')}
         </Button>
       </div>
     </Modal>

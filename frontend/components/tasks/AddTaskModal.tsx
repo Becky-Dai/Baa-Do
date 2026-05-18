@@ -9,8 +9,8 @@ import { useState } from 'react';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import type { TaskType, TaskDifficulty, TaskVisibility, TaskCategory } from '../../types/task';
-
 import type { Task } from '../../types/task';
+import { useT } from '../../contexts/LangContext';
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -26,24 +26,25 @@ interface AddTaskModalProps {
   }) => void;
 }
 
-const CATEGORIES: { value: TaskCategory; emoji: string; label: string }[] = [
-  { value: 'life',    emoji: '🏠', label: '生活' },
-  { value: 'study',   emoji: '📚', label: '学习' },
-  { value: 'work',    emoji: '💼', label: '工作' },
-  { value: 'fitness', emoji: '💪', label: '健身' },
-  { value: 'leisure', emoji: '🎮', label: '休闲' },
-  { value: 'diet',    emoji: '🍎', label: '饮食' },
-  { value: 'social',  emoji: '💬', label: '社交' },
-  { value: 'other',   emoji: '✨', label: '其他' },
+const CATEGORY_VALUES: { value: TaskCategory; emoji: string; key: 'cat.life'|'cat.study'|'cat.work'|'cat.fitness'|'cat.leisure'|'cat.diet'|'cat.social'|'cat.other' }[] = [
+  { value: 'life',    emoji: '🏠', key: 'cat.life'    },
+  { value: 'study',   emoji: '📚', key: 'cat.study'   },
+  { value: 'work',    emoji: '💼', key: 'cat.work'    },
+  { value: 'fitness', emoji: '💪', key: 'cat.fitness' },
+  { value: 'leisure', emoji: '🎮', key: 'cat.leisure' },
+  { value: 'diet',    emoji: '🍎', key: 'cat.diet'    },
+  { value: 'social',  emoji: '💬', key: 'cat.social'  },
+  { value: 'other',   emoji: '✨', key: 'cat.other'   },
 ];
 
-const COMPLEXITY: { val: TaskDifficulty; label: string; dotColor: string; ringColor: string }[] = [
-  { val: 'easy',   label: '轻松',  dotColor: 'bg-green-400', ringColor: 'ring-green-400' },
-  { val: 'medium', label: '适中',  dotColor: 'bg-amber-400', ringColor: 'ring-amber-400' },
-  { val: 'hard',   label: '挑战',  dotColor: 'bg-red-400',   ringColor: 'ring-red-400'   },
+const COMPLEXITY_VALUES: { val: TaskDifficulty; dotColor: string; ringColor: string; labelKey: 'task.easy'|'task.medium'|'task.hard' }[] = [
+  { val: 'easy',   dotColor: 'bg-green-400', ringColor: 'ring-green-400', labelKey: 'task.easy'   },
+  { val: 'medium', dotColor: 'bg-amber-400', ringColor: 'ring-amber-400', labelKey: 'task.medium' },
+  { val: 'hard',   dotColor: 'bg-red-400',   ringColor: 'ring-red-400',   labelKey: 'task.hard'   },
 ];
 
 export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: AddTaskModalProps) {
+  const t = useT();
   const [title, setTitle]           = useState(initialTask?.title ?? '');
   const [type, setType]             = useState<TaskType>(initialTask?.type ?? 'personal');
   const [category, setCategory]     = useState<TaskCategory>(initialTask?.category ?? 'study');
@@ -57,7 +58,6 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
     e.preventDefault();
     if (!title.trim()) return;
     onAdd({ type, title: title.trim(), difficulty, visibility, category, priority });
-    // reset
     setTitle('');
     setType('personal');
     setCategory('study');
@@ -67,18 +67,20 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
     onClose();
   }
 
+  const priorityLabelKey = `modal.priority${priority}` as 'modal.priority0'|'modal.priority1'|'modal.priority2'|'modal.priority3'|'modal.priority4';
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={isEditMode ? '编辑任务 ✏️' : '添加任务 ✏️'}>
+    <Modal isOpen={isOpen} onClose={onClose} title={isEditMode ? t('modal.editTitle') : t('modal.addTitle')}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto pr-1">
 
         {/* Task type */}
         <div>
-          <p className="text-xs font-semibold text-gray-500 mb-2">任务类型</p>
+          <p className="text-xs font-semibold text-gray-500 mb-2">{t('modal.taskType')}</p>
           <div className="grid grid-cols-2 gap-2">
             {([
-              { val: 'personal' as TaskType, emoji: '🐑', label: '个人' },
-              { val: 'shared'   as TaskType, emoji: '🤝', label: '共同' },
-            ]).map(({ val, emoji, label }) => (
+              { val: 'personal' as TaskType, emoji: '🐑', labelKey: 'modal.typePersonal' as const },
+              { val: 'shared'   as TaskType, emoji: '🤝', labelKey: 'modal.typeShared'   as const },
+            ]).map(({ val, emoji, labelKey }) => (
               <button
                 key={val}
                 type="button"
@@ -89,7 +91,7 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
                     : 'border-gray-100 bg-gray-50 text-gray-400 hover:bg-green-50 hover:border-green-200'
                 }`}
               >
-                <span>{emoji}</span><span>{label}</span>
+                <span>{emoji}</span><span>{t(labelKey)}</span>
               </button>
             ))}
           </div>
@@ -97,9 +99,9 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
 
         {/* Category */}
         <div>
-          <p className="text-xs font-semibold text-gray-500 mb-2">分类</p>
+          <p className="text-xs font-semibold text-gray-500 mb-2">{t('modal.category')}</p>
           <div className="grid grid-cols-4 gap-2">
-            {CATEGORIES.map(({ value, emoji, label }) => (
+            {CATEGORY_VALUES.map(({ value, emoji, key }) => (
               <button
                 key={value}
                 type="button"
@@ -111,7 +113,7 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
                 }`}
               >
                 <span className="text-lg leading-none">{emoji}</span>
-                <span>{label}</span>
+                <span>{t(key)}</span>
               </button>
             ))}
           </div>
@@ -119,12 +121,12 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
 
         {/* Title */}
         <div>
-          <label className="text-xs font-semibold text-gray-500 block mb-1">任务内容</label>
+          <label className="text-xs font-semibold text-gray-500 block mb-1">{t('modal.titleLabel')}</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder={type === 'personal' ? '例如：背 30 个单词' : '例如：一起散步 20 分钟'}
+            placeholder={type === 'personal' ? t('modal.personalPlaceholder') : t('modal.sharedPlaceholder')}
             className="w-full border border-green-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-300"
             maxLength={50}
             required
@@ -133,7 +135,7 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
 
         {/* Priority */}
         <div>
-          <p className="text-xs font-semibold text-gray-500 mb-2">优先级</p>
+          <p className="text-xs font-semibold text-gray-500 mb-2">{t('modal.priority')}</p>
           <div className="flex items-center gap-1">
             {([1, 2, 3, 4] as const).map((level) => (
               <button
@@ -142,7 +144,6 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
                 onClick={() => setPriority(priority === level ? 0 : level)}
                 className="text-2xl leading-none transition-all hover:scale-110"
                 style={level <= priority ? {} : { filter: 'grayscale(0.6)', opacity: 0.45 }}
-                title={`优先级 ${level}`}
               >
                 🐑
               </button>
@@ -153,20 +154,18 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
                 onClick={() => setPriority(0)}
                 className="text-xs text-gray-400 hover:text-gray-600 underline ml-2"
               >
-                清除
+                {t('modal.clearPriority')}
               </button>
             )}
           </div>
-          <p className="text-xs text-gray-400 mt-1">
-            {priority === 0 ? '无优先级' : priority === 1 ? '低' : priority === 2 ? '中' : priority === 3 ? '高' : '最高 — 一定先做！'}
-          </p>
+          <p className="text-xs text-gray-400 mt-1">{t(priorityLabelKey)}</p>
         </div>
 
         {/* Complexity */}
         <div>
-          <p className="text-xs font-semibold text-gray-500 mb-2">复杂度</p>
+          <p className="text-xs font-semibold text-gray-500 mb-2">{t('modal.complexity')}</p>
           <div className="flex gap-3">
-            {COMPLEXITY.map(({ val, label, dotColor, ringColor }) => (
+            {COMPLEXITY_VALUES.map(({ val, dotColor, ringColor, labelKey }) => (
               <button
                 key={val}
                 type="button"
@@ -178,7 +177,7 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
                 }`}
               >
                 <span className={`w-3 h-3 rounded-full ${dotColor}`} />
-                {label}
+                {t(labelKey)}
               </button>
             ))}
           </div>
@@ -187,25 +186,25 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
         {/* Visibility (personal only) */}
         {type === 'personal' && (
           <div>
-            <p className="text-xs font-semibold text-gray-500 mb-1">对搭子的可见性</p>
+            <p className="text-xs font-semibold text-gray-500 mb-1">{t('modal.visibility')}</p>
             <select
               value={visibility}
               onChange={(e) => setVisibility(e.target.value as TaskVisibility)}
               className="w-full border border-green-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-300"
             >
-              <option value="private">🔒 完全私密</option>
-              <option value="status_only">👁 只显示完成状态</option>
-              <option value="visible_to_buddy">🤝 对搭子可见</option>
+              <option value="private">{t('modal.visPrivate')}</option>
+              <option value="status_only">{t('modal.visStatus')}</option>
+              <option value="visible_to_buddy">{t('modal.visVisible')}</option>
             </select>
           </div>
         )}
 
         <div className="flex gap-2 mt-1">
           <Button type="button" variant="ghost" size="sm" onClick={onClose} className="flex-1">
-            取消
+            {t('modal.cancel')}
           </Button>
           <Button type="submit" size="sm" className="flex-1" disabled={!title.trim()}>
-            {isEditMode ? '保存修改 ✓' : '添加任务 ✓'}
+            {isEditMode ? t('modal.save') : t('modal.add')}
           </Button>
         </div>
 
