@@ -18,7 +18,8 @@ import { useMockLamb } from '../../hooks/useMockLamb';
 import { useMockTasks } from '../../hooks/useMockTasks';
 import { useMockInventory } from '../../hooks/useMockInventory';
 import { calcPersonalReward, calcSharedReward } from '../../lib/rewardRules';
-import { mockActivityLogs, mockMeadowElements, mockUsers } from '../../data/mockData';
+import { mockMeadowElements, mockUsers } from '../../data/mockData';
+import { useMockActivityLog } from '../../hooks/useMockActivityLog';
 import type { Task, TaskReward } from '../../types/task';
 
 export default function DashboardLayout() {
@@ -32,6 +33,7 @@ export default function DashboardLayout() {
   const { lamb, feedLamb, addLambExp } = useMockLamb();
   const { personalTasks, sharedTasks, completeTask, addTask } = useMockTasks();
   const { myItems, consumeItem, addItem } = useMockInventory();
+  const { logs, appendTaskComplete, appendFeed } = useMockActivityLog();
 
   function handleCompleteTask(taskId: string) {
     const task = [...personalTasks, ...sharedTasks].find((t) => t.id === taskId);
@@ -58,6 +60,7 @@ export default function DashboardLayout() {
       reward = calcSharedReward(task.difficulty);
     }
 
+    appendTaskComplete(task, currentUser.name);
     setRewardTask(task);
     setRewardData(reward);
   }
@@ -70,6 +73,7 @@ export default function DashboardLayout() {
   function handleFeed(item: typeof myItems[0]) {
     feedLamb(item);
     consumeItem(item.id);
+    appendFeed(lamb.name, item.name, currentUser.name);
   }
 
   const placedElements = mockMeadowElements.filter((e) => e.isPlaced);
@@ -175,7 +179,7 @@ export default function DashboardLayout() {
           <BuddyPanel
             currentUser={currentUser}
             buddyUser={buddyUser}
-            activityLogs={mockActivityLogs}
+            activityLogs={logs}
             allUsers={mockUsers}
           />
         </section>
