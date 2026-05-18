@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Badge from '../ui/Badge';
 import type { Task } from '../../types/task';
 
@@ -22,17 +23,11 @@ interface TaskCardProps {
 }
 
 const difficultyColor: Record<string, BadgeColor> = {
-  easy: 'green',
-  medium: 'amber',
-  hard: 'pink',
+  easy: 'green', medium: 'amber', hard: 'pink',
 };
-
 const difficultyLabel: Record<string, string> = {
-  easy: 'Easy',
-  medium: 'Medium',
-  hard: 'Hard',
+  easy: 'Easy', medium: 'Medium', hard: 'Hard',
 };
-
 const categoryEmoji: Record<string, string> = {
   life: '🏠', study: '📚', work: '💼', fitness: '💪',
   leisure: '🎮', diet: '🍎', social: '💬', other: '✨',
@@ -62,7 +57,9 @@ export default function TaskCard({
   onComplete, onUncomplete, onDelete, onEdit,
 }: TaskCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isDone = task.status === 'completed';
   const alreadyCompleted = task.completedByIds.includes(currentUserId);
@@ -70,12 +67,24 @@ export default function TaskCard({
   const isOwnTask = task.ownerId === currentUserId;
   const canManage = isOwnTask || task.type === 'shared';
 
+  function openMenu() {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + 6,
+        right: window.innerWidth - rect.right,
+      });
+    }
+    setMenuOpen(true);
+  }
+
   useEffect(() => {
     if (!menuOpen) return;
     function handleClick(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
+      const target = e.target as Node;
+      const insideDropdown = dropdownRef.current?.contains(target);
+      const insideButton = buttonRef.current?.contains(target);
+      if (!insideDropdown && !insideButton) setMenuOpen(false);
     }
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
@@ -104,6 +113,39 @@ export default function TaskCard({
     background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)',
     pointerEvents: 'none',
   };
+
+  const dropdown = menuOpen ? createPortal(
+    <div
+      ref={dropdownRef}
+      style={{
+        position: 'fixed',
+        top: dropdownPos.top,
+        right: dropdownPos.right,
+        zIndex: 9999,
+        width: 112,
+        borderRadius: 16,
+        overflow: 'hidden',
+        background: '#ffffff',
+        border: '1px solid rgba(0,0,0,0.08)',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.14)',
+      }}
+    >
+      <button
+        onClick={() => { setMenuOpen(false); onEdit?.(task.id); }}
+        className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-green-50 flex items-center gap-2"
+      >
+        <span>✏️</span> 编辑
+      </button>
+      <div className="h-px bg-gray-100 mx-2" />
+      <button
+        onClick={() => { setMenuOpen(false); onDelete?.(task.id); }}
+        className="w-full px-4 py-2.5 text-left text-sm text-red-500 hover:bg-red-50 flex items-center gap-2"
+      >
+        <span>🗑</span> 删除
+      </button>
+    </div>,
+    document.body
+  ) : null;
 
   return (
     <div
@@ -134,7 +176,6 @@ export default function TaskCard({
             </p>
             {isPrivate && <span className="text-xs text-gray-300">🔒</span>}
           </div>
-
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <span className="text-xs">{categoryEmoji[task.category] ?? '✨'}</span>
             {task.priority > 0 && (
@@ -144,18 +185,16 @@ export default function TaskCard({
             {task.type === 'shared' && <Badge label="共同" color="blue" />}
             {isDone && <Badge label="完成 ✓" color="green" />}
           </div>
-
-          {task.type === 'shared' && (
-            <SharedProgress task={task} buddyName={buddyName} />
-          )}
+          {task.type === 'shared' && <SharedProgress task={task} buddyName={buddyName} />}
         </div>
 
-        {/* Three-dot menu */}
+        {/* Three-dot menu button */}
         {canManage && (
-          <div ref={menuRef} className="relative flex-shrink-0">
+          <>
             <button
-              onClick={() => setMenuOpen((v) => !v)}
-              className="w-6 h-6 flex items-center justify-center rounded-full text-gray-500 hover:text-gray-700 transition-colors text-xs font-bold"
+              ref={buttonRef}
+              onClick={openMenu}
+              className="w-6 h-6 flex items-center justify-center rounded-full text-gray-500 hover:text-gray-700 transition-colors text-xs font-bold flex-shrink-0"
               style={{
                 border: '1.5px solid rgba(120,120,120,0.35)',
                 background: 'rgba(255,255,255,0.5)',
@@ -164,32 +203,8 @@ export default function TaskCard({
             >
               ···
             </button>
-
-            {menuOpen && (
-              <div
-                className="absolute right-0 top-7 z-50 w-28 rounded-2xl overflow-hidden shadow-xl"
-                style={{
-                  background: '#ffffff',
-                  border: '1px solid rgba(0,0,0,0.08)',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.14)',
-                }}
-              >
-                <button
-                  onClick={() => { setMenuOpen(false); onEdit?.(task.id); }}
-                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-green-50 flex items-center gap-2"
-                >
-                  <span>✏️</span> 编辑
-                </button>
-                <div className="h-px bg-gray-100 mx-2" />
-                <button
-                  onClick={() => { setMenuOpen(false); onDelete?.(task.id); }}
-                  className="w-full px-4 py-2.5 text-left text-sm text-red-500 hover:bg-red-50 flex items-center gap-2"
-                >
-                  <span>🗑</span> 删除
-                </button>
-              </div>
-            )}
-          </div>
+            {dropdown}
+          </>
         )}
       </div>
     </div>
