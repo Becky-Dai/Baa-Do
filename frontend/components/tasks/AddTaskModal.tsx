@@ -76,8 +76,8 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
           <p className="text-xs font-semibold text-gray-500 mb-2">任务类型</p>
           <div className="grid grid-cols-2 gap-2">
             {([
-              { val: 'personal' as TaskType, emoji: '🐑', label: '个人 Personal' },
-              { val: 'shared'   as TaskType, emoji: '🤝', label: '共同 Shared' },
+              { val: 'personal' as TaskType, emoji: '🐑', label: '个人' },
+              { val: 'shared'   as TaskType, emoji: '🤝', label: '共同' },
             ]).map(({ val, emoji, label }) => (
               <button
                 key={val}

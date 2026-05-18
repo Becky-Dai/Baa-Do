@@ -41,7 +41,7 @@ export default function TodayPanel({
       {/* Personal tasks */}
       <section>
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-bold text-green-800">个人任务 Personal</h3>
+          <h3 className="text-sm font-bold text-green-800">个人任务</h3>
           <span className="text-xs text-gray-400">{donePersonal.length}/{personalTasks.length} 完成</span>
         </div>
 
@@ -65,7 +65,7 @@ export default function TodayPanel({
       {/* Shared tasks */}
       <section>
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-bold text-blue-700">共同任务 Shared</h3>
+          <h3 className="text-sm font-bold text-blue-700">共同任务</h3>
           <span className="text-xs text-gray-400">
             {sharedTasks.filter((t) => t.status === 'completed').length}/{sharedTasks.length} 完成
           </span>
