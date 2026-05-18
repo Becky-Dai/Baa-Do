@@ -15,6 +15,8 @@ interface TodayPanelProps {
   onComplete: (taskId: string) => void;
   onUncomplete: (taskId: string) => void;
   onAddTask: () => void;
+  onDelete: (taskId: string) => void;
+  onEdit: (taskId: string) => void;
 }
 
 export default function TodayPanel({
@@ -25,6 +27,8 @@ export default function TodayPanel({
   onComplete,
   onUncomplete,
   onAddTask,
+  onDelete,
+  onEdit,
 }: TodayPanelProps) {
   const pendingPersonal = personalTasks.filter((t) => t.status !== 'completed');
   const donePersonal = personalTasks.filter((t) => t.status === 'completed');
@@ -46,10 +50,10 @@ export default function TodayPanel({
         ) : (
           <div className="flex flex-col gap-2">
             {pendingPersonal.map((task) => (
-              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} />
+              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} onDelete={onDelete} onEdit={onEdit} />
             ))}
             {donePersonal.map((task) => (
-              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} />
+              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} onDelete={onDelete} onEdit={onEdit} />
             ))}
           </div>
         )}
@@ -72,7 +76,7 @@ export default function TodayPanel({
         ) : (
           <div className="flex flex-col gap-2">
             {sharedTasks.map((task) => (
-              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} />
+              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} onDelete={onDelete} onEdit={onEdit} />
             ))}
           </div>
         )}

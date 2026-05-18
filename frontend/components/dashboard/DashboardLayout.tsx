@@ -65,7 +65,8 @@ export default function DashboardLayout() {
 
   const { room, currentUser, buddyUser } = useMockRoom();
   const { lamb, feedLamb, addLambExp } = useMockLamb();
-  const { personalTasks, sharedTasks, completeTask, addTask } = useMockTasks();
+  const { personalTasks, sharedTasks, completeTask, addTask, deleteTask, updateTask } = useMockTasks();
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { myItems, consumeItem, addItem } = useMockInventory();
   const { logs, appendTaskComplete, appendFeed, removeByTaskId } = useMockActivityLog();
 
@@ -110,6 +111,17 @@ export default function DashboardLayout() {
   function confirmUndo(taskId: string) {
     completeTask(taskId);
     removeByTaskId(taskId);
+  }
+
+  function handleEditTask(taskId: string) {
+    const task = [...personalTasks, ...sharedTasks].find((t) => t.id === taskId);
+    if (task) setEditingTask(task);
+  }
+
+  function handleSaveEdit(params: Parameters<typeof addTask>[0]) {
+    if (!editingTask) return;
+    updateTask(editingTask.id, params);
+    setEditingTask(null);
   }
 
   function handleFeed(item: typeof myItems[0]) {
@@ -206,6 +218,8 @@ export default function DashboardLayout() {
             onComplete={handleCompleteTask}
             onUncomplete={handleUncompleteTask}
             onAddTask={() => setShowAddTask(true)}
+            onDelete={deleteTask}
+            onEdit={handleEditTask}
           />
         </section>
 
@@ -236,9 +250,18 @@ export default function DashboardLayout() {
       />
 
       <AddTaskModal
+        key="add"
         isOpen={showAddTask}
         onClose={() => setShowAddTask(false)}
         onAdd={addTask}
+      />
+
+      <AddTaskModal
+        key={editingTask?.id ?? 'edit'}
+        isOpen={!!editingTask}
+        onClose={() => setEditingTask(null)}
+        initialTask={editingTask ?? undefined}
+        onAdd={handleSaveEdit}
       />
 
       <RewardModal

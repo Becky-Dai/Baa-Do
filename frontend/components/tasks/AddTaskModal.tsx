@@ -10,9 +10,12 @@ import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import type { TaskType, TaskDifficulty, TaskVisibility, TaskCategory } from '../../types/task';
 
+import type { Task } from '../../types/task';
+
 interface AddTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialTask?: Task;
   onAdd: (params: {
     type: TaskType;
     title: string;
@@ -40,13 +43,15 @@ const COMPLEXITY: { val: TaskDifficulty; label: string; dotColor: string; ringCo
   { val: 'hard',   label: '挑战',  dotColor: 'bg-red-400',   ringColor: 'ring-red-400'   },
 ];
 
-export default function AddTaskModal({ isOpen, onClose, onAdd }: AddTaskModalProps) {
-  const [title, setTitle]           = useState('');
-  const [type, setType]             = useState<TaskType>('personal');
-  const [category, setCategory]     = useState<TaskCategory>('study');
-  const [difficulty, setDifficulty] = useState<TaskDifficulty>('easy');
-  const [priority, setPriority]     = useState<0 | 1 | 2 | 3>(0);
-  const [visibility, setVisibility] = useState<TaskVisibility>('private');
+export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: AddTaskModalProps) {
+  const [title, setTitle]           = useState(initialTask?.title ?? '');
+  const [type, setType]             = useState<TaskType>(initialTask?.type ?? 'personal');
+  const [category, setCategory]     = useState<TaskCategory>(initialTask?.category ?? 'study');
+  const [difficulty, setDifficulty] = useState<TaskDifficulty>(initialTask?.difficulty ?? 'easy');
+  const [priority, setPriority]     = useState<0 | 1 | 2 | 3>(initialTask?.priority ?? 0);
+  const [visibility, setVisibility] = useState<TaskVisibility>(initialTask?.visibility ?? 'private');
+
+  const isEditMode = !!initialTask;
 
   function handlePriorityClick(level: 1 | 2 | 3) {
     setPriority((prev) => (prev === level ? 0 : level));
@@ -67,7 +72,7 @@ export default function AddTaskModal({ isOpen, onClose, onAdd }: AddTaskModalPro
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="添加任务 ✏️">
+    <Modal isOpen={isOpen} onClose={onClose} title={isEditMode ? '编辑任务 ✏️' : '添加任务 ✏️'}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto pr-1">
 
         {/* Task type */}
@@ -213,7 +218,7 @@ export default function AddTaskModal({ isOpen, onClose, onAdd }: AddTaskModalPro
             取消
           </Button>
           <Button type="submit" size="sm" className="flex-1" disabled={!title.trim()}>
-            添加任务 ✓
+            {isEditMode ? '保存修改 ✓' : '添加任务 ✓'}
           </Button>
         </div>
 

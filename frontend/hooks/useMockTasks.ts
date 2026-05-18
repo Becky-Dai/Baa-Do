@@ -7,7 +7,7 @@
 
 import { useState } from 'react';
 import { mockTasks, CURRENT_USER_ID } from '../data/mockData';
-import type { Task, TaskType, TaskDifficulty, TaskVisibility, TaskCategory } from '../types/task';
+import type { Task, TaskType, TaskDifficulty, TaskVisibility, TaskCategory, TaskStatus } from '../types/task';
 
 export function useMockTasks() {
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
@@ -72,5 +72,21 @@ export function useMockTasks() {
     setTasks((prev) => [newTask, ...prev]);
   }
 
-  return { tasks, personalTasks, buddyTasks, sharedTasks, completeTask, addTask };
+  function deleteTask(taskId: string) {
+    setTasks((prev) => prev.filter((t) => t.id !== taskId));
+  }
+
+  function updateTask(taskId: string, params: {
+    title: string;
+    difficulty: TaskDifficulty;
+    visibility: TaskVisibility;
+    category: TaskCategory;
+    priority: 0 | 1 | 2 | 3;
+  }) {
+    setTasks((prev) =>
+      prev.map((t) => (t.id !== taskId ? t : { ...t, ...params }))
+    );
+  }
+
+  return { tasks, personalTasks, buddyTasks, sharedTasks, completeTask, addTask, deleteTask, updateTask };
 }
