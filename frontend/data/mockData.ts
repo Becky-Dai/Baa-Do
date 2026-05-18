@@ -66,6 +66,8 @@ export const mockTasks: Task[] = [
     category: 'study',
     priority: 1,
     isPinned: true,
+    repeat: 'daily',
+    lastCompletedDate: null,
   },
   {
     id: 'task-002',
@@ -80,6 +82,8 @@ export const mockTasks: Task[] = [
     category: 'fitness',
     priority: 0,
     isPinned: false,
+    repeat: 'daily',
+    lastCompletedDate: '2026-05-18',
   },
   {
     id: 'task-003',
@@ -94,6 +98,8 @@ export const mockTasks: Task[] = [
     category: 'other',
     priority: 0,
     isPinned: false,
+    repeat: 'once',
+    lastCompletedDate: null,
   },
   {
     id: 'task-004',
@@ -108,6 +114,8 @@ export const mockTasks: Task[] = [
     category: 'work',
     priority: 2,
     isPinned: false,
+    repeat: 'once',
+    lastCompletedDate: null,
   },
   {
     id: 'task-005',
@@ -122,6 +130,8 @@ export const mockTasks: Task[] = [
     category: 'fitness',
     priority: 0,
     isPinned: false,
+    repeat: 'once',
+    lastCompletedDate: null,
   },
 ];
 

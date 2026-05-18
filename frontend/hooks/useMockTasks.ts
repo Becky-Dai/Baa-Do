@@ -7,10 +7,22 @@
 
 import { useState } from 'react';
 import { mockTasks, CURRENT_USER_ID } from '../data/mockData';
-import type { Task, TaskType, TaskDifficulty, TaskVisibility, TaskCategory, TaskStatus } from '../types/task';
+import type { Task, TaskType, TaskDifficulty, TaskVisibility, TaskCategory, TaskStatus, TaskRepeat } from '../types/task';
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
 
 export function useMockTasks() {
-  const [tasks, setTasks] = useState<Task[]>(mockTasks);
+  // Auto-reset daily tasks whose lastCompletedDate is before today
+  const [tasks, setTasks] = useState<Task[]>(() =>
+    mockTasks.map((t) => {
+      if (t.repeat === 'daily' && t.lastCompletedDate && t.lastCompletedDate < todayStr()) {
+        return { ...t, status: 'pending', completedByIds: [], lastCompletedDate: null };
+      }
+      return t;
+    })
+  );
 
   const personalTasks = tasks.filter((t) => t.type === 'personal' && t.ownerId === CURRENT_USER_ID);
   const buddyTasks = tasks.filter((t) => t.type === 'personal' && t.ownerId !== CURRENT_USER_ID);
@@ -23,10 +35,9 @@ export function useMockTasks() {
         if (t.type === 'personal') {
           const isDone = t.completedByIds.includes(CURRENT_USER_ID);
           if (isDone) {
-            // undo
-            return { ...t, status: 'pending', completedByIds: [] };
+            return { ...t, status: 'pending', completedByIds: [], lastCompletedDate: null };
           }
-          return { ...t, status: 'completed', completedByIds: [CURRENT_USER_ID] };
+          return { ...t, status: 'completed', completedByIds: [CURRENT_USER_ID], lastCompletedDate: t.repeat === 'daily' ? todayStr() : null };
         }
         const already = t.completedByIds.includes(CURRENT_USER_ID);
         if (already) {
@@ -55,6 +66,7 @@ export function useMockTasks() {
     visibility: TaskVisibility;
     category: TaskCategory;
     priority: 0 | 1 | 2 | 3 | 4;
+    repeat: TaskRepeat;
   }) {
     const newTask: Task = {
       id: `task-${Date.now()}`,
@@ -69,6 +81,8 @@ export function useMockTasks() {
       category: params.category,
       priority: params.priority,
       isPinned: false,
+      repeat: params.repeat,
+      lastCompletedDate: null,
     };
     setTasks((prev) => [newTask, ...prev]);
   }
@@ -89,6 +103,7 @@ export function useMockTasks() {
     visibility: TaskVisibility;
     category: TaskCategory;
     priority: 0 | 1 | 2 | 3 | 4;
+    repeat: TaskRepeat;
   }) {
     setTasks((prev) =>
       prev.map((t) => (t.id !== taskId ? t : { ...t, ...params }))

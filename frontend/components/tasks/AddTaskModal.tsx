@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
-import type { TaskType, TaskDifficulty, TaskVisibility, TaskCategory } from '../../types/task';
+import type { TaskType, TaskDifficulty, TaskVisibility, TaskCategory, TaskRepeat } from '../../types/task';
 import type { Task } from '../../types/task';
 import { useT } from '../../contexts/LangContext';
 
@@ -23,6 +23,7 @@ interface AddTaskModalProps {
     visibility: TaskVisibility;
     category: TaskCategory;
     priority: 0 | 1 | 2 | 3 | 4;
+    repeat: TaskRepeat;
   }) => void;
 }
 
@@ -51,19 +52,21 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
   const [difficulty, setDifficulty] = useState<TaskDifficulty>(initialTask?.difficulty ?? 'easy');
   const [priority, setPriority]     = useState<0 | 1 | 2 | 3 | 4>(initialTask?.priority ?? 0);
   const [visibility, setVisibility] = useState<TaskVisibility>(initialTask?.visibility ?? 'private');
+  const [repeat, setRepeat]         = useState<TaskRepeat>(initialTask?.repeat ?? 'once');
 
   const isEditMode = !!initialTask;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) return;
-    onAdd({ type, title: title.trim(), difficulty, visibility, category, priority });
+    onAdd({ type, title: title.trim(), difficulty, visibility, category, priority, repeat });
     setTitle('');
     setType('personal');
     setCategory('study');
     setDifficulty('easy');
     setPriority(0);
     setVisibility('private');
+    setRepeat('once');
     onClose();
   }
 
@@ -198,6 +201,27 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
             </select>
           </div>
         )}
+
+        {/* Repeat toggle */}
+        <div
+          className="flex items-center justify-between rounded-2xl px-4 py-3 cursor-pointer select-none transition-colors"
+          style={{ background: repeat === 'daily' ? 'rgba(74,222,128,0.12)' : '#f9fafb', border: `1.5px solid ${repeat === 'daily' ? '#4ade80' : '#e5e7eb'}` }}
+          onClick={() => setRepeat(repeat === 'daily' ? 'once' : 'daily')}
+        >
+          <div>
+            <p className="text-sm font-semibold text-gray-700">🔁 {t('task.repeatLabel')}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{t('task.repeatHint')}</p>
+          </div>
+          <div
+            className="w-10 h-6 rounded-full relative transition-colors flex-shrink-0 ml-3"
+            style={{ background: repeat === 'daily' ? '#4ade80' : '#d1d5db' }}
+          >
+            <div
+              className="absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all"
+              style={{ left: repeat === 'daily' ? '22px' : '2px' }}
+            />
+          </div>
+        </div>
 
         <div className="flex gap-2 mt-1">
           <Button type="button" variant="ghost" size="sm" onClick={onClose} className="flex-1">

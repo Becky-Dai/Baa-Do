@@ -196,6 +196,12 @@ export default function TaskCard({
             <span className="text-xs text-green-700 font-medium">{t('task.sharedBadge')}</span>
           </>
         )}
+        {task.repeat === 'daily' && (
+          <>
+            <span className="text-gray-300 text-xs">·</span>
+            <span className="text-xs text-blue-400 font-medium">🔁</span>
+          </>
+        )}
         <span className="ml-auto flex items-center gap-0.5">
           {[1,2,3,4].map((i) => (
             <span key={i} className="text-base leading-none select-none"
