@@ -22,6 +22,40 @@ import { mockMeadowElements, mockUsers } from '../../data/mockData';
 import { useMockActivityLog } from '../../hooks/useMockActivityLog';
 import type { Task, TaskReward } from '../../types/task';
 
+function WoodSign({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col items-center mb-4">
+      {/* Rope holes */}
+      <div className="flex gap-8 mb-1">
+        <div className="w-2 h-2 rounded-full bg-amber-900/60 shadow-inner" />
+        <div className="w-2 h-2 rounded-full bg-amber-900/60 shadow-inner" />
+      </div>
+      {/* Sign board */}
+      <div
+        className="px-6 py-2 rounded-sm relative"
+        style={{
+          background: 'linear-gradient(180deg, #c8922a 0%, #a06820 40%, #b87c2e 60%, #8a5a18 100%)',
+          boxShadow: '0 3px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,220,120,0.4), inset 0 -1px 0 rgba(0,0,0,0.2)',
+          border: '1px solid #7a4e10',
+        }}
+      >
+        {/* Wood grain lines */}
+        <div className="absolute inset-0 rounded-sm overflow-hidden pointer-events-none opacity-20">
+          {[20, 40, 60, 80].map((top) => (
+            <div key={top} className="absolute w-full h-px bg-amber-900" style={{ top: `${top}%` }} />
+          ))}
+        </div>
+        <span
+          className="relative text-sm font-bold tracking-widest"
+          style={{ color: '#fde68a', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}
+        >
+          {label}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardLayout() {
   const [showFeedModal, setShowFeedModal] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
@@ -163,7 +197,7 @@ export default function DashboardLayout() {
       <div className="flex flex-1 gap-0 divide-x divide-white/20">
         {/* Today */}
         <section className="flex-1 overflow-y-auto px-4 py-4">
-          <h2 className="text-xs font-bold text-white drop-shadow uppercase tracking-widest mb-3 text-center">Today</h2>
+          <WoodSign label="Today" />
           <TodayPanel
             personalTasks={personalTasks}
             sharedTasks={sharedTasks}
@@ -177,13 +211,13 @@ export default function DashboardLayout() {
 
         {/* Meadow info — transparent center column, Mochi is in background */}
         <section className="flex-1 overflow-y-auto px-4 py-4">
-          <h2 className="text-xs font-bold text-white drop-shadow uppercase tracking-widest mb-3 text-center">Meadow</h2>
+          <WoodSign label="Meadow" />
           <MeadowPanel room={room} meadowElements={mockMeadowElements} lamb={lamb} onFeed={() => setShowFeedModal(true)} />
         </section>
 
         {/* Buddy */}
         <section className="flex-1 overflow-y-auto px-4 py-4">
-          <h2 className="text-xs font-bold text-white drop-shadow uppercase tracking-widest mb-3 text-center">Buddy</h2>
+          <WoodSign label="Buddy" />
           <BuddyPanel
             currentUser={currentUser}
             buddyUser={buddyUser}
