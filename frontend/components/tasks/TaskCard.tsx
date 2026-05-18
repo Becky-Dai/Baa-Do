@@ -185,9 +185,15 @@ export default function TaskCard({
           </div>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <span className="text-xs">{categoryEmoji[task.category] ?? '✨'}</span>
-            {task.priority > 0 && (
-              <span className="text-xs">{'🚩'.repeat(task.priority)}</span>
-            )}
+            <span className="flex items-center gap-px">
+              {[1,2,3,4].map((i) => (
+                <span
+                  key={i}
+                  className="text-xs leading-none select-none"
+                  style={i <= task.priority ? {} : { filter: 'grayscale(1)', opacity: 0.2 }}
+                >🐑</span>
+              ))}
+            </span>
             <Badge label={difficultyLabel[task.difficulty]} color={difficultyColor[task.difficulty]} />
             {task.type === 'shared' && <Badge label="共同" color="blue" />}
             {isDone && <Badge label="完成 ✓" color="green" />}

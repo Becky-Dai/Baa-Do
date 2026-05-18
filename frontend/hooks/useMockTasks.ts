@@ -54,7 +54,7 @@ export function useMockTasks() {
     difficulty: TaskDifficulty;
     visibility: TaskVisibility;
     category: TaskCategory;
-    priority: 0 | 1 | 2 | 3;
+    priority: 0 | 1 | 2 | 3 | 4;
   }) {
     const newTask: Task = {
       id: `task-${Date.now()}`,
@@ -81,7 +81,7 @@ export function useMockTasks() {
     difficulty: TaskDifficulty;
     visibility: TaskVisibility;
     category: TaskCategory;
-    priority: 0 | 1 | 2 | 3;
+    priority: 0 | 1 | 2 | 3 | 4;
   }) {
     setTasks((prev) =>
       prev.map((t) => (t.id !== taskId ? t : { ...t, ...params }))

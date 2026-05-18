@@ -22,7 +22,7 @@ export interface Task {
   completedByIds: UserId[];
   createdAt: string;
   category: TaskCategory;
-  priority: 0 | 1 | 2 | 3;
+  priority: 0 | 1 | 2 | 3 | 4;
 }
 
 export interface TaskReward {

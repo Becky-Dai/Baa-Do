@@ -22,7 +22,7 @@ interface AddTaskModalProps {
     difficulty: TaskDifficulty;
     visibility: TaskVisibility;
     category: TaskCategory;
-    priority: 0 | 1 | 2 | 3;
+    priority: 0 | 1 | 2 | 3 | 4;
   }) => void;
 }
 
@@ -48,14 +48,10 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
   const [type, setType]             = useState<TaskType>(initialTask?.type ?? 'personal');
   const [category, setCategory]     = useState<TaskCategory>(initialTask?.category ?? 'study');
   const [difficulty, setDifficulty] = useState<TaskDifficulty>(initialTask?.difficulty ?? 'easy');
-  const [priority, setPriority]     = useState<0 | 1 | 2 | 3>(initialTask?.priority ?? 0);
+  const [priority, setPriority]     = useState<0 | 1 | 2 | 3 | 4>(initialTask?.priority ?? 0);
   const [visibility, setVisibility] = useState<TaskVisibility>(initialTask?.visibility ?? 'private');
 
   const isEditMode = !!initialTask;
-
-  function handlePriorityClick(level: 1 | 2 | 3) {
-    setPriority((prev) => (prev === level ? 0 : level));
-  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -138,40 +134,31 @@ export default function AddTaskModal({ isOpen, onClose, initialTask, onAdd }: Ad
         {/* Priority */}
         <div>
           <p className="text-xs font-semibold text-gray-500 mb-2">优先级</p>
-          <div className="flex items-center gap-3">
-            {([1, 2, 3] as const).map((level) => (
+          <div className="flex items-center gap-1">
+            {([1, 2, 3, 4] as const).map((level) => (
               <button
                 key={level}
                 type="button"
-                onClick={() => handlePriorityClick(level)}
-                className="flex items-center gap-1 text-sm transition-all"
+                onClick={() => setPriority(priority === level ? 0 : level)}
+                className="text-2xl leading-none transition-all hover:scale-110"
+                style={level <= priority ? {} : { filter: 'grayscale(1)', opacity: 0.22 }}
                 title={`优先级 ${level}`}
               >
-                {([1, 2, 3] as const).map((flag) => (
-                  <span
-                    key={flag}
-                    className={`text-lg transition-all ${
-                      flag <= level && priority >= level ? 'grayscale-0' :
-                      flag <= priority ? 'grayscale-0' : 'grayscale opacity-25'
-                    }`}
-                  >
-                    🚩
-                  </span>
-                ))}
+                🐑
               </button>
             ))}
             {priority > 0 && (
               <button
                 type="button"
                 onClick={() => setPriority(0)}
-                className="text-xs text-gray-400 hover:text-gray-600 underline ml-1"
+                className="text-xs text-gray-400 hover:text-gray-600 underline ml-2"
               >
                 清除
               </button>
             )}
           </div>
           <p className="text-xs text-gray-400 mt-1">
-            {priority === 0 ? '无优先级' : priority === 1 ? '低优先' : priority === 2 ? '中优先' : '高优先 — 一定先做！'}
+            {priority === 0 ? '无优先级' : priority === 1 ? '低' : priority === 2 ? '中' : priority === 3 ? '高' : '最高 — 一定先做！'}
           </p>
         </div>
 
