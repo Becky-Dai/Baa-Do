@@ -63,6 +63,8 @@ export const mockTasks: Task[] = [
     ownerId: 'user-beiqi',
     completedByIds: [],
     createdAt: '2026-05-17T08:00:00Z',
+    category: 'study',
+    priority: 1,
   },
   {
     id: 'task-002',
@@ -74,6 +76,8 @@ export const mockTasks: Task[] = [
     ownerId: 'user-beiqi',
     completedByIds: ['user-beiqi'],
     createdAt: '2026-05-17T08:00:00Z',
+    category: 'fitness',
+    priority: 0,
   },
   {
     id: 'task-003',
@@ -85,6 +89,8 @@ export const mockTasks: Task[] = [
     ownerId: 'user-alice',
     completedByIds: [],
     createdAt: '2026-05-17T08:00:00Z',
+    category: 'other',
+    priority: 0,
   },
   {
     id: 'task-004',
@@ -96,6 +102,8 @@ export const mockTasks: Task[] = [
     ownerId: null,
     completedByIds: ['user-beiqi'],
     createdAt: '2026-05-17T08:00:00Z',
+    category: 'work',
+    priority: 2,
   },
   {
     id: 'task-005',
@@ -107,6 +115,8 @@ export const mockTasks: Task[] = [
     ownerId: null,
     completedByIds: [],
     createdAt: '2026-05-17T08:00:00Z',
+    category: 'fitness',
+    priority: 0,
   },
 ];
 

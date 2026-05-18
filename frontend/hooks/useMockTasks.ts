@@ -7,7 +7,7 @@
 
 import { useState } from 'react';
 import { mockTasks, CURRENT_USER_ID } from '../data/mockData';
-import type { Task, TaskType, TaskDifficulty, TaskVisibility } from '../types/task';
+import type { Task, TaskType, TaskDifficulty, TaskVisibility, TaskCategory } from '../types/task';
 
 export function useMockTasks() {
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
@@ -53,6 +53,8 @@ export function useMockTasks() {
     title: string;
     difficulty: TaskDifficulty;
     visibility: TaskVisibility;
+    category: TaskCategory;
+    priority: 0 | 1 | 2 | 3;
   }) {
     const newTask: Task = {
       id: `task-${Date.now()}`,
@@ -64,6 +66,8 @@ export function useMockTasks() {
       ownerId: params.type === 'personal' ? CURRENT_USER_ID : null,
       completedByIds: [],
       createdAt: new Date().toISOString(),
+      category: params.category,
+      priority: params.priority,
     };
     setTasks((prev) => [newTask, ...prev]);
   }
