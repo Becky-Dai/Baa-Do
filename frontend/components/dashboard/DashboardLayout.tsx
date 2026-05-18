@@ -53,14 +53,17 @@ export default function DashboardLayout() {
         };
         addItem(reward.item, 'food', itemEffects[reward.item] ?? {});
       }
+      appendTaskComplete(task, currentUser.name);
     } else {
       const alreadyCompleted = task.completedByIds.includes(currentUser.id);
-      const willComplete = !alreadyCompleted && task.completedByIds.length === 1;
+      if (alreadyCompleted) return;
+      const willComplete = task.completedByIds.length === 1;
+      // Log partial completion immediately (before full completion check)
+      appendTaskComplete(task, currentUser.name);
       if (!willComplete) return;
       reward = calcSharedReward(task.difficulty);
     }
 
-    appendTaskComplete(task, currentUser.name);
     setRewardTask(task);
     setRewardData(reward);
   }
