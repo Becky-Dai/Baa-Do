@@ -23,6 +23,7 @@ export interface Task {
   createdAt: string;
   category: TaskCategory;
   priority: 0 | 1 | 2 | 3 | 4;
+  isPinned: boolean;
 }
 
 export interface TaskReward {

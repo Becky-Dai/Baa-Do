@@ -68,8 +68,15 @@ export function useMockTasks() {
       createdAt: new Date().toISOString(),
       category: params.category,
       priority: params.priority,
+      isPinned: false,
     };
     setTasks((prev) => [newTask, ...prev]);
+  }
+
+  function pinTask(taskId: string) {
+    setTasks((prev) =>
+      prev.map((t) => (t.id !== taskId ? t : { ...t, isPinned: !t.isPinned }))
+    );
   }
 
   function deleteTask(taskId: string) {
@@ -88,5 +95,5 @@ export function useMockTasks() {
     );
   }
 
-  return { tasks, personalTasks, buddyTasks, sharedTasks, completeTask, addTask, deleteTask, updateTask };
+  return { tasks, personalTasks, buddyTasks, sharedTasks, completeTask, addTask, deleteTask, updateTask, pinTask };
 }

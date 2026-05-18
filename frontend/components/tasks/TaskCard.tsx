@@ -17,6 +17,7 @@ interface TaskCardProps {
   onUncomplete: (taskId: string) => void;
   onDelete?: (taskId: string) => void;
   onEdit?: (taskId: string) => void;
+  onPin?: (taskId: string) => void;
 }
 
 const categoryEmoji: Record<string, string> = {
@@ -34,7 +35,7 @@ const difficultyLabel: Record<string, string> = {
 
 export default function TaskCard({
   task, currentUserId, buddyName,
-  onComplete, onUncomplete, onDelete, onEdit,
+  onComplete, onUncomplete, onDelete, onEdit, onPin,
 }: TaskCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
@@ -98,6 +99,17 @@ export default function TaskCard({
       }}
     >
       <button
+        onClick={() => { setMenuOpen(false); onPin?.(task.id); }}
+        className="w-full px-4 py-2.5 text-left text-sm text-amber-600 hover:bg-amber-50 flex items-center gap-2"
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M8.167 1.75 9.333 2.917 7.583 4.667l.583 2.916-1.75 1.75-1.166-2.333-2.333 2.333-.584-.583 2.334-2.333L2.333 5.25l1.75-1.75 2.917.583L8.167 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+          {task.isPinned && <line x1="9.333" y1="9.333" x2="11.667" y2="11.667" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>}
+        </svg>
+        {task.isPinned ? '取消置顶' : '置顶'}
+      </button>
+      <div className="h-px bg-gray-100 mx-2" />
+      <button
         onClick={() => { setMenuOpen(false); onEdit?.(task.id); }}
         className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-green-50 flex items-center gap-2"
       >
@@ -141,6 +153,11 @@ export default function TaskCard({
         </button>
 
         <p className={`flex-1 text-sm font-medium leading-snug ${isDone ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+          {task.isPinned && (
+            <svg width="11" height="11" viewBox="0 0 14 14" fill="none" className="inline-block mr-1 mb-0.5 text-amber-500" style={{ verticalAlign: 'middle' }}>
+              <path d="M8.167 1.75 9.333 2.917 7.583 4.667l.583 2.916-1.75 1.75-1.166-2.333-2.333 2.333-.584-.583 2.334-2.333L2.333 5.25l1.75-1.75 2.917.583L8.167 1.75Z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" fillOpacity="0.15"/>
+            </svg>
+          )}
           {isPrivate && !isOwnTask ? '私密任务' : task.title}
           {isPrivate && <span className="ml-1 text-gray-300 text-xs">🔒</span>}
         </p>

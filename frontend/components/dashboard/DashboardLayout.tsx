@@ -65,7 +65,7 @@ export default function DashboardLayout() {
 
   const { room, currentUser, buddyUser } = useMockRoom();
   const { lamb, feedLamb, addLambExp } = useMockLamb();
-  const { personalTasks, sharedTasks, completeTask, addTask, deleteTask, updateTask } = useMockTasks();
+  const { personalTasks, sharedTasks, completeTask, addTask, deleteTask, updateTask, pinTask } = useMockTasks();
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { myItems, consumeItem, addItem } = useMockInventory();
   const { logs, appendTaskComplete, appendFeed, removeByTaskId } = useMockActivityLog();
@@ -220,6 +220,7 @@ export default function DashboardLayout() {
             onAddTask={() => setShowAddTask(true)}
             onDelete={deleteTask}
             onEdit={handleEditTask}
+            onPin={pinTask}
           />
         </section>
 

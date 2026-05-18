@@ -17,6 +17,7 @@ interface TodayPanelProps {
   onAddTask: () => void;
   onDelete: (taskId: string) => void;
   onEdit: (taskId: string) => void;
+  onPin: (taskId: string) => void;
 }
 
 export default function TodayPanel({
@@ -29,8 +30,10 @@ export default function TodayPanel({
   onAddTask,
   onDelete,
   onEdit,
+  onPin,
 }: TodayPanelProps) {
-  const pendingPersonal = personalTasks.filter((t) => t.status !== 'completed');
+  const sortByPin = (a: Task, b: Task) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0);
+  const pendingPersonal = personalTasks.filter((t) => t.status !== 'completed').sort(sortByPin);
   const donePersonal = personalTasks.filter((t) => t.status === 'completed');
 
   return (
@@ -50,10 +53,10 @@ export default function TodayPanel({
         ) : (
           <div className="flex flex-col gap-2">
             {pendingPersonal.map((task) => (
-              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} onDelete={onDelete} onEdit={onEdit} />
+              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} onDelete={onDelete} onEdit={onEdit} onPin={onPin} />
             ))}
             {donePersonal.map((task) => (
-              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} onDelete={onDelete} onEdit={onEdit} />
+              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} onDelete={onDelete} onEdit={onEdit} onPin={onPin} />
             ))}
           </div>
         )}
@@ -68,15 +71,15 @@ export default function TodayPanel({
           </span>
         </div>
 
-        {sharedTasks.length === 0 ? (
+        {[...sharedTasks].sort(sortByPin).length === 0 ? (
           <div className="text-center py-6 text-gray-400 text-sm bg-gray-50 rounded-2xl">
             还没有共同任务<br />
             <span className="text-xs">一起做点什么吧！</span>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            {sharedTasks.map((task) => (
-              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} onDelete={onDelete} onEdit={onEdit} />
+            {[...sharedTasks].sort(sortByPin).map((task) => (
+              <TaskCard key={task.id} task={task} currentUserId={currentUserId} buddyName={buddyName} onComplete={onComplete} onUncomplete={onUncomplete} onDelete={onDelete} onEdit={onEdit} onPin={onPin} />
             ))}
           </div>
         )}
