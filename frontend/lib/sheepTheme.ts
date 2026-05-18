@@ -1,0 +1,50 @@
+/**
+ * 中文：小羊场景颜色、尺寸和动画参数集中管理。
+ * English: Centralized colors, sizes, and animation values for the sheep scene.
+ */
+export const sheepTheme = {
+  colors: {
+    pageBg: '#f6fbf6',
+    panel: '#ffffff',
+    panelSoft: '#eef8ee',
+    text: '#263529',
+    mutedText: '#637568',
+    accent: '#70b77e',
+    accentDark: '#4f935e',
+    skyTop: '#bfe8ff',
+    skyBottom: '#eef9ff',
+    grass: '#8ed36f',
+    grassDark: '#5cab51',
+    fence: '#b9824f',
+    fenceDark: '#8f5e35',
+    wool: '#fffaf0',
+    woolShadow: '#f1e5cd',
+    face: '#f5dfbd',
+    faceWarm: '#efd0a8',
+    innerEar: '#efc1ad',
+    eye: '#171713',
+    eyeShine: '#fffdf7',
+    blush: '#edb0a6',
+    mouth: '#8d6240',
+    hoof: '#9a6c41',
+    cloud: '#ffffff',
+    heart: '#ff7fa3',
+    star: '#ffd866',
+    flowerPink: '#f49ab4',
+    flowerYellow: '#ffe36e',
+    stone: '#c9cec5',
+  },
+  sheep: {
+    scale: 1.02,
+    bodyY: 0.78,
+    headY: 1.32,
+    headZ: 0.54,
+  },
+  animation: {
+    idleBob: 0.045,
+    breathScale: 0.025,
+    headSway: 0.08,
+    earSway: 0.12,
+    jumpHeight: 0.36,
+  },
+} as const;

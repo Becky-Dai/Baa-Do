@@ -24,6 +24,7 @@ import { useMockActivityLog } from '../../hooks/useMockActivityLog';
 import type { Task, TaskReward } from '../../types/task';
 import { LangProvider, useLang, useT } from '../../contexts/LangContext';
 import type { LangCode } from '../../lib/i18n/translations';
+import { SheepSceneWrapper } from '../sheep/SheepSceneWrapper';
 
 const LANGUAGES = [
   { code: 'zh-CN', label: '简体中文', short: '简中' },
@@ -222,7 +223,6 @@ function DashboardContent() {
   }
 
   const placedElements = mockMeadowElements.filter((e) => e.isPlaced);
-  const moodEmoji: Record<string, string> = { happy:'😊', normal:'😌', hungry:'😢', sad:'😔' };
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -245,22 +245,13 @@ function DashboardContent() {
             <span className="text-4xl select-none">{el.emoji}</span>
           </div>
         ))}
-        {/* Mochi in grass, center-bottom */}
-        <div className="absolute bottom-[14%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
-          <button
-            onClick={() => setShowFeedModal(true)}
-            className="flex flex-col items-center gap-1 group"
-          >
-            <div className="relative">
-              <span className="text-[10rem] select-none drop-shadow-lg group-hover:scale-110 transition-transform inline-block leading-none">
-                {lamb.appearance === 'milktea' ? '🐏' : '🐑'}
-              </span>
-              <span className="absolute -top-2 -right-2 text-2xl">{moodEmoji[lamb.moodState]}</span>
-            </div>
-            <span className="text-sm font-bold text-white drop-shadow">{lamb.name}</span>
-            <span className="text-xs text-white/80 drop-shadow">Lv.{lamb.level} · 点击喂食</span>
-          </button>
-        </div>
+        {/* Mochi in grass, center-bottom — 3D sheep scene */}
+        <SheepSceneWrapper
+          lambMood={lamb.moodState}
+          lambName={lamb.name}
+          lambLevel={lamb.level}
+          onFeedClick={() => setShowFeedModal(true)}
+        />
       </div>
 
       {/* Header */}
