@@ -155,7 +155,12 @@ export default function TaskCard({
           <div ref={menuRef} className="relative flex-shrink-0">
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="w-6 h-6 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-white/40 transition-colors text-xs"
+              className="w-6 h-6 flex items-center justify-center rounded-full text-gray-500 hover:text-gray-700 transition-colors text-xs font-bold"
+              style={{
+                border: '1.5px solid rgba(120,120,120,0.35)',
+                background: 'rgba(255,255,255,0.5)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+              }}
             >
               ···
             </button>
