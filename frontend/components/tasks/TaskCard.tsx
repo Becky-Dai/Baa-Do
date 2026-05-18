@@ -134,7 +134,10 @@ export default function TaskCard({
         onClick={() => { setMenuOpen(false); onEdit?.(task.id); }}
         className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-green-50 flex items-center gap-2"
       >
-        <span>✏️</span> 编辑
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9.917 1.75a1.237 1.237 0 0 1 1.75 1.75L4.083 11.083l-2.333.584.583-2.334L9.917 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        编辑
       </button>
       <div className="h-px bg-gray-100 mx-2" />
       <button
