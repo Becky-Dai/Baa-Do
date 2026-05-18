@@ -167,11 +167,11 @@ export default function TaskCard({
 
             {menuOpen && (
               <div
-                className="absolute right-0 top-7 z-50 w-28 rounded-2xl overflow-hidden shadow-lg"
+                className="absolute right-0 top-7 z-50 w-28 rounded-2xl overflow-hidden shadow-xl"
                 style={{
-                  background: 'rgba(255,255,255,0.92)',
-                  backdropFilter: 'blur(16px)',
-                  border: '1px solid rgba(255,255,255,0.6)',
+                  background: '#ffffff',
+                  border: '1px solid rgba(0,0,0,0.08)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.14)',
                 }}
               >
                 <button
